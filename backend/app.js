@@ -1,5 +1,4 @@
 
-
 const express = require('express');
 const app = express();
 const passport = require('./middleware/passport');
@@ -30,6 +29,7 @@ const messageRoutes = require('./routes/messages');
 const transactionRoutes = require('./routes/transactions');
 const auditLogRoutes = require('./routes/auditLogs');
 const adminRoutes = require('./routes/admin');
+const dashboardRoutes = require('./routes/dashboard');
 
 app.use('/auth', authRoutes);
 app.use('/', userRoutes);
@@ -38,6 +38,7 @@ app.use('/', messageRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/audit-logs', auditLogRoutes);
 app.use('/admin', adminRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 // DB Connect
 connectDB();

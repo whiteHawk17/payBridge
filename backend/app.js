@@ -30,7 +30,12 @@ const transactionRoutes = require('./routes/transactions');
 const auditLogRoutes = require('./routes/auditLogs');
 const adminRoutes = require('./routes/admin');
 const dashboardRoutes = require('./routes/dashboard');
-
+const cors = require('cors');
+   
+app.use(cors({
+  origin: 'http://localhost:3001',
+  credentials: true // if you use cookies
+}));
 app.use('/auth', authRoutes);
 app.use('/', userRoutes);
 app.use('/rooms', roomRoutes);
@@ -39,6 +44,7 @@ app.use('/transactions', transactionRoutes);
 app.use('/audit-logs', auditLogRoutes);
 app.use('/admin', adminRoutes);
 app.use('/dashboard', dashboardRoutes);
+
 
 // DB Connect
 connectDB();

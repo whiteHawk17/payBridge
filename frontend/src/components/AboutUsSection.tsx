@@ -29,7 +29,7 @@ const AboutUsSection: React.FC = () => {
           </div>
         </div>
         <div className="team-member">
-          <h3 className="member-name">Vinay</h3>
+          <h3 className="member-name">Vinay Jangra</h3>
           <div className="member-contact">
             <p><i className="fas fa-envelope"></i><a href="mailto:vini17102005@gmail.com">vini17102005@gmail.com</a></p>
             <p><i className="fas fa-phone"></i><a href="tel:+918949716631">+91 8949716631</a></p>

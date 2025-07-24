@@ -1,0 +1,40 @@
+/* Dashboard Theme Variables (Light & Dark) */
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --accent-color: #7e22ce;
+    --secondary-glow-color: #8b5cf6;
+    --background-sidebar: #ffffff;
+    --background-main: #f9fafb;
+    --background-card: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --sidebar-width: 280px;
+    --danger-color: #ef4444;
+    --danger-hover: #dc2626;
+    --status-green: #10b981;
+    --status-yellow: #f59e0b;
+    --status-blue: #3b82f6;
+    --status-purple: #8b5cf6;
+    --input-bg: #f3f4f6;
+}
+
+.dark-mode {
+    --primary-color: #7e22ce;
+    --primary-hover: #6b21a8;
+    --accent-color: #7e22ce;
+    --background-sidebar: #1e293b;
+    --background-main: #0f172a;
+    --background-card: #1e293b;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    --danger-color: #fca5a5;
+    --danger-hover: #ef4444;
+    --status-green: #22c55e;
+    --status-yellow: #f59e0b;
+    --status-blue: #3b82f6;
+    --status-purple: #a78bfa;
+    --input-bg: #0f172a;
+} 

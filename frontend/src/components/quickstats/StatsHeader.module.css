@@ -1,0 +1,37 @@
+/* StatsHeader.module.css */
+.statsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.headerText h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+}
+.headerText p {
+  color: var(--text-secondary);
+  margin: 5px 0 0 0;
+}
+.dateFilter {
+  display: flex;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  padding: 5px;
+}
+.filterBtn {
+  background: none;
+  border: none;
+  padding: 8px 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+.active {
+  background-color: var(--background-card);
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+} 

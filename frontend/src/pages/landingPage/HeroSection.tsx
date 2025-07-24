@@ -1,6 +1,6 @@
 import React from 'react';
 import  { jwtDecode }  from 'jwt-decode';
-import { BACKEND_BASE_URL } from '../api/config';
+import { BACKEND_BASE_URL } from '../../api/config';
 
 const HeroSection: React.FC = () => {
   const handleStartTransaction = () => {

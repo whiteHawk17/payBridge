@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { BACKEND_BASE_URL } from '../api/config';
+import { BACKEND_BASE_URL } from '../../api/config';
+import { Link } from 'react-router-dom';
 
 const MainHeader: React.FC = () => {
   useEffect(() => {

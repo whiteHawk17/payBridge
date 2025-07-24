@@ -1,0 +1,20 @@
+/* CreateRoomPage.module.css */
+.dashboardContainer {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  height: 100vh;
+  transition: grid-template-columns 0.3s ease;
+}
+.mainContent {
+  background-color: var(--background-main);
+  overflow-y: auto;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+.contentArea {
+  padding: 40px;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+} 

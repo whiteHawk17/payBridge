@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const MainFooter: React.FC = () => (
   <footer className="main-footer-bottom">
@@ -6,7 +7,7 @@ const MainFooter: React.FC = () => (
     <ul className="footer-links">
       <li><a href="#">Terms of Service</a></li>
       <li><a href="#">Privacy Policy</a></li>
-      <li><a href="#">Contact Us</a></li>
+      <li><Link to="/contact">Contact Us</Link></li>
     </ul>
   </footer>
 );

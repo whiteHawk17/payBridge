@@ -1,0 +1,66 @@
+/* DangerZoneCard.module.css */
+.profileCard {
+  background-color: var(--background-card);
+  border: 1px solid var(--danger-color);
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+.dangerZone .cardHeader h2 {
+  color: var(--danger-color);
+}
+.cardHeader {
+  padding: 20px 25px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cardHeader h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+.cardBody {
+  padding: 10px 25px;
+}
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.infoRow:last-child {
+  border-bottom: none;
+}
+.notificationText {
+  text-align: left;
+  margin-right: 20px;
+}
+.infoLabel {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.infoDescription {
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: block;
+}
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btnDanger {
+  background-color: var(--danger-color);
+  color: white;
+}
+.btnDanger:hover {
+  background-color: var(--danger-hover);
+}
+.dangerZone {
+  border-color: var(--danger-color);
+} 

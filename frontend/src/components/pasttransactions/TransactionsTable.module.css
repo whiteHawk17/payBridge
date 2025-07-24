@@ -1,0 +1,102 @@
+/* TransactionsTable.module.css */
+.tableContainer {
+  background-color: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.transactionTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.transactionTable th, .transactionTable td {
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+.transactionTable thead {
+  background-color: #f9fafb;
+}
+.transactionTable th {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+.transactionTable tbody tr:last-child td {
+  border-bottom: none;
+}
+.transactionTable tbody tr:hover {
+  background-color: #f3f4f6;
+}
+.statusTag {
+  font-weight: 600;
+}
+.successful {
+  color: var(--status-green);
+}
+.failed {
+  color: var(--status-red);
+}
+.amount {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+.currencyIcon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #f59e0b;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 20px;
+}
+.tableFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f9fafb;
+  border-top: 1px solid var(--border-color);
+}
+.footerInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+.pagination {
+  display: flex;
+  gap: 10px;
+}
+.btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btnPrimary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+.btnPrimary:hover {
+  background-color: var(--primary-hover);
+}
+.btnSecondary {
+  background-color: var(--background-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+} 

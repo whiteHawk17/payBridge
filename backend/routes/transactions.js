@@ -1,6 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
+const jwtAuth = require('../middleware/jwtAuth');
+const TransactionsModel = require('../model/TransactionsModel');
+
+// GET /transactions - all transactions for the logged-in user
+router.get('/', jwtAuth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const txs = await TransactionsModel.find({
+      $or: [
+        { buyerId: userId },
+        { sellerId: userId }
+      ]
+    }).sort({ createdAt: -1 });
+    const result = txs.map(tx => ({
+      id: tx._id,
+      amount: tx.amount,
+      paymentStatus: tx.paymentStatus,
+      createdAt: tx.createdAt
+    }));
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // POST /rooms/:roomId/transaction
 router.post('/rooms/:roomId/transaction', (req, res) => {

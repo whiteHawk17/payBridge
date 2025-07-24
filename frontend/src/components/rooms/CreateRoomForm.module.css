@@ -1,0 +1,111 @@
+/* CreateRoomForm.module.css */
+.formContainer {
+  flex: 2;
+  background-color: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.formHeader h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.formHeader p {
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+}
+.formGroup {
+  margin-bottom: 25px;
+}
+.formGroup label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.roleSelector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+.roleOption {
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.roleOption:hover {
+  border-color: var(--primary-color);
+}
+.active {
+  border-color: var(--primary-color);
+  background-color: #f0f5ff;
+}
+.roleOption input[type="radio"] {
+  display: none;
+}
+.roleContent i {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+.roleContent strong {
+  display: block;
+  font-size: 16px;
+}
+.roleContent span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+textarea, input[type="number"], input[type="date"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+textarea:focus, input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+.formRow {
+  display: flex;
+  gap: 20px;
+}
+.formRow .formGroup {
+  flex: 1;
+}
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btnPrimary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+.btnPrimary:hover {
+  background-color: var(--primary-hover);
+}
+.btnSecondary {
+  background-color: var(--background-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+} 

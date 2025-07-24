@@ -1,0 +1,54 @@
+/* ContactForm.module.css */
+.contactFormContainer {
+  background-color: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 30px;
+}
+.contactForm {}
+.formRow {
+  display: flex;
+  gap: 20px;
+}
+.formGroup {
+  flex: 1;
+  margin-bottom: 20px;
+}
+.formGroup label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.contactForm input, .contactForm textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.contactForm input:focus, .contactForm textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btnPrimary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  width: 100%;
+}
+.btnPrimary:hover {
+  background-color: var(--primary-hover);
+} 

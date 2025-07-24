@@ -3,8 +3,8 @@ const router = express.Router();
 const dashboardController = require('../controllers/dashboardController');
 const jwtAuth = require('../middleware/jwtAuth');
 
-// GET /dashboard/stats
-router.get('/dashboard/stats', jwtAuth, dashboardController.getDashboardStats);
+// GET /stats
+router.get('/stats', jwtAuth, dashboardController.getDashboardStats);
 
 // GET /rooms/active
 router.get('/rooms/active', jwtAuth, dashboardController.getActiveRooms);
@@ -20,5 +20,11 @@ router.get('/profile', jwtAuth, dashboardController.getProfile);
 
 // POST /logout
 router.post('/logout', jwtAuth, dashboardController.logout);
+
+// GET /past-transactions
+router.get('/past-transactions', jwtAuth, dashboardController.getPastTransactions);
+
+// GET /analytics
+router.get('/analytics', jwtAuth, dashboardController.getAnalytics);
 
 module.exports = router; 

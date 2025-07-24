@@ -1,0 +1,103 @@
+/* ActiveRooms.module.css */
+.activeRooms {
+  margin-bottom: 40px;
+}
+.roomsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.roomCard {
+  background-color: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: left;
+}
+.roomCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: white;
+}
+.inProgress {
+  background-color: var(--status-purple);
+}
+.awaitingPayment {
+  background-color: var(--status-yellow);
+}
+.pendingApproval {
+  background-color: var(--status-blue);
+}
+.roomDescription {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+.roomPrice {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+.roomParticipants {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 15px;
+}
+.avatars {
+  display: flex;
+}
+.avatars img {
+  border-radius: 50%;
+  margin-left: -8px;
+  border: 2px solid var(--background-card);
+}
+.roomProgress {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.progressBar {
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 5px 0;
+}
+.progress {
+  height: 100%;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+}
+.viewDetailsBtn {
+  width: 100%;
+  margin-top: 20px;
+}
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btnPrimary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+.btnPrimary:hover {
+  background-color: var(--primary-hover);
+} 

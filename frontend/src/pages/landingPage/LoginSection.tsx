@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { BACKEND_BASE_URL } from '../api/config';
+import { BACKEND_BASE_URL } from '../../api/config';
 
 const LoginSection: React.FC = () => {
   const [email, setEmail] = useState('');

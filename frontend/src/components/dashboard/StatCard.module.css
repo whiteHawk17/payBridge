@@ -1,0 +1,26 @@
+.statCard {
+    background-color: var(--background-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+}
+.statHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+.statNumber {
+    font-size: 36px;
+    font-weight: 700;
+    margin: 10px 0;
+}
+/* Dark mode overrides */
+:global(.dark-mode) .statCard {
+    background-color: var(--background-card);
+    border-color: var(--border-color);
+}
+:global(.dark-mode) .statHeader {
+    color: var(--text-secondary);
+} 

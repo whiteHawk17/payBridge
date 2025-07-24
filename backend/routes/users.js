@@ -1,22 +1,51 @@
 const express = require('express');
 const router = express.Router();
+const UsersModel = require('../model/UsersModel');
+const jwtAuth = require('../middleware/jwtAuth');
 
 // GET /profile
-router.get('/profile', (req, res) => {
-  // TODO: Implement get profile logic
-  res.send('Get profile endpoint');
+router.get('/profile', jwtAuth, async (req, res) => {
+  try {
+    const user = await UsersModel.findById(req.user.id).select('name email photo');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // PUT /profile
-router.put('/profile', (req, res) => {
-  // TODO: Implement update profile logic
-  res.send('Update profile endpoint');
+router.put('/profile', jwtAuth, async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ error: 'Name is required' });
+    const user = await UsersModel.findByIdAndUpdate(
+      req.user.id,
+      { name },
+      { new: true, runValidators: true, select: 'name email photo' }
+    );
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // PUT /profile/password
 router.put('/profile/password', (req, res) => {
   // TODO: Implement change password logic
   res.send('Change password endpoint');
+});
+
+// DELETE /profile
+router.delete('/profile', jwtAuth, async (req, res) => {
+  try {
+    const user = await UsersModel.findByIdAndDelete(req.user.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json({ message: 'Account deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 module.exports = router; 

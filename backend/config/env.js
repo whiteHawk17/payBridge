@@ -11,5 +11,6 @@ module.exports = {
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK_URL,
+  FRONTEND_BASE_URL: process.env.FRONTEND_BASE_URL,
 
 };

@@ -1,0 +1,78 @@
+.roomCard {
+    background-color: var(--background-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: left;
+}
+.roomCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+.roomCardTitle {
+    font-size: 18px;
+    font-weight: 600;
+}
+.status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: white;
+}
+.statusInProgress {
+    background-color: var(--status-purple);
+}
+.statusAwaitingPayment {
+    background-color: var(--status-yellow);
+}
+.statusPendingApproval {
+    background-color: var(--status-blue);
+}
+.roomDescription {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+.roomPrice {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+.avatars {
+    display: flex;
+}
+.avatarsImg {
+    border-radius: 50%;
+    margin-left: -8px;
+    border: 2px solid var(--background-card);
+}
+.roomProgress {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.progressBar {
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+.progress {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 4px;
+}
+/* Dark mode overrides */
+:global(.dark-mode) .roomCard {
+    background-color: var(--background-card);
+    border-color: var(--border-color);
+}
+:global(.dark-mode) .avatarsImg {
+    border-color: var(--background-card);
+}
+:global(.dark-mode) .progressBar {
+    background-color: #334155;
+} 

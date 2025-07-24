@@ -1,0 +1,13 @@
+/* WelcomeHeader.module.css */
+.welcomeHeader {
+  margin-bottom: 30px;
+}
+.welcomeHeader h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+.welcomeHeader p {
+  color: var(--text-secondary);
+  font-size: 16px;
+} 

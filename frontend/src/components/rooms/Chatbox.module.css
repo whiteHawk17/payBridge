@@ -1,0 +1,81 @@
+/* Chatbox.module.css */
+.chatboxContainer {
+  flex: 1;
+  background-color: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 750px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.chatboxHeader {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+}
+.chatboxMessages {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.message {
+  margin-bottom: 15px;
+  max-width: 80%;
+}
+.message p {
+  padding: 10px 15px;
+  border-radius: 12px;
+  margin: 0;
+}
+.timestamp {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 5px;
+  display: block;
+}
+.received {
+  align-self: flex-start;
+}
+.received p {
+  background-color: #f3f4f6;
+}
+:global(body.dark-mode) :global([class*="Chatbox_received__"]) p {
+  background: #25304a !important;
+  color: #fff !important;
+  font-weight: 500 !important;
+  border-radius: 12px !important;
+  padding: 10px 15px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
+}
+.sent {
+  align-self: flex-end;
+  text-align: right;
+}
+.sent p {
+  background-color: var(--primary-color);
+  color: white;
+}
+.chatboxInput {
+  display: flex;
+  padding: 20px;
+  border-top: 1px solid var(--border-color);
+}
+.chatboxInput input {
+  flex-grow: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  margin-right: 10px;
+}
+.chatboxInput button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+} 

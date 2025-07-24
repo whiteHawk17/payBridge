@@ -1,0 +1,70 @@
+/* AddMethodModal.module.css */
+.modalOverlay {
+  display: flex;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+}
+.modal {
+  background: var(--background-card);
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+  min-width: 320px;
+  max-width: 95vw;
+  color: var(--text-primary);
+}
+.modal h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.formGroup {
+  margin-bottom: 1.2rem;
+}
+.formGroup label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+.formGroup input {
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: #f3f4f6;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+.btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnPrimary {
+  background: var(--primary-color);
+  color: #fff;
+}
+.btnPrimary:hover {
+  background: var(--primary-hover);
+}
+.btnSecondary {
+  background: #e5e7eb;
+  color: var(--text-primary);
+  border: 1px solid transparent;
+}
+.btnSecondary:hover {
+  background: #d1d5db;
+} 

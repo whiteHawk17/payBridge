@@ -1,0 +1,168 @@
+/* HeaderBar.module.css */
+.mainHeaderBar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 30px;
+    background-color: var(--background-sidebar);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.sidebarToggleBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+}
+.headerNav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-grow: 1;
+}
+.headerNavLink, .navBtn {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 18px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.headerNavLink:hover, .navBtn:hover, .headerNavLink:focus, .navBtn:focus {
+    background-color: #f3f4f6;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+.headerNavLinkActive, .navBtn.headerNavLinkActive {
+    color: var(--primary-color);
+    background-color: #e5e7eb;
+    font-weight: 700;
+    text-decoration: none;
+}
+.navBtn {
+    background-color: #e5e7eb;
+    color: var(--text-primary);
+    border: 1px solid #d1d5db;
+}
+.navBtn i {
+    transform: rotate(-45deg);
+    font-size: 14px;
+}
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.userAvatarHeader {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    cursor: pointer;
+    gap: 5px;
+    font-size: 20px;
+    position: relative;
+    transition: background 0.3s;
+}
+.userAvatarHeader i {
+    font-size: 14px;
+    margin-left: 4px;
+}
+.userAvatarHeader:focus, .userAvatarHeader:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.profileDropdown {
+    position: relative;
+}
+.dropdownMenu {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    background-color: var(--background-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    width: 180px;
+    overflow: hidden;
+    display: none;
+    z-index: 1000;
+}
+.profileDropdownActive .dropdownMenu,
+.dropdownMenu.profileDropdownActive {
+    display: block;
+}
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s, color 0.2s;
+}
+.dropdownItem:hover, .dropdownItem:focus {
+    background-color: #f3f4f6;
+    color: var(--primary-color);
+}
+.dropdownItem i {
+    width: 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 18px;
+}
+/* Dark mode overrides */
+:global(.dark-mode) .mainHeaderBar {
+    background-color: var(--background-card);
+    border-bottom-color: var(--border-color);
+}
+:global(.dark-mode) .userAvatarHeader {
+    background: linear-gradient(135deg, #a78bfa, #6d28d9);
+}
+:global(.dark-mode) .dropdownMenu {
+    background-color: #334155;
+    border-color: var(--border-color);
+}
+:global(.dark-mode) .dropdownItem {
+    color: var(--text-primary);
+}
+:global(.dark-mode) .dropdownItem:hover, :global(.dark-mode) .dropdownItem:focus {
+    background-color: #475569;
+    color: #a78bfa;
+}
+:global(.dark-mode) .headerNavLink, :global(.dark-mode) .navBtn {
+    color: #a3aed6;
+    background: none;
+}
+:global(.dark-mode) .headerNavLinkActive, :global(.dark-mode) .navBtn.headerNavLinkActive {
+    color: #a78bfa;
+    background: #232946;
+} 

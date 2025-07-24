@@ -1,0 +1,13 @@
+/* ProfileHeader.module.css */
+.profileHeader {
+  margin-bottom: 40px;
+}
+.profileHeader h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+.profileHeader p {
+  color: var(--text-secondary);
+  font-size: 16px;
+} 

@@ -6,6 +6,7 @@
     --primary-hover: #2563eb; 
     --background-main: #000000;
     --background-card: #111111;
+    --background-sidebar: #18181b; /* dark sidebar */
     --nav-background: rgba(16, 17, 26, 0.5);
     --text-primary: #ffffff;
     --text-secondary: #a0a0a0;
@@ -20,6 +21,7 @@
 body.light-mode {
     --background-main: #f9fafb; /* Light grey background */
     --background-card: #ffffff; /* White cards */
+    --background-sidebar: #fff; /* light sidebar */
     --nav-background: rgba(255, 255, 255, 0.5); /* White navbar */
     --text-primary: #111827; /* Dark text */
     --text-secondary: #6b7280; /* Grey text */
@@ -34,11 +36,17 @@ body {
     background-color: var(--background-main);
     color: var(--text-primary);
     line-height: 1.6;
+    /* Remove grid background by default */
+    background-image: none;
+    background-size: 40px 40px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Only landing page gets grid background */
+body.landing-page {
     background-image:
         linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
         linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-    background-size: 40px 40px;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .main-container {

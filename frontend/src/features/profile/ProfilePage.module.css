@@ -1,0 +1,19 @@
+/* ProfilePage.module.css */
+.dashboardContainer {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+  transition: grid-template-columns 0.3s ease;
+}
+.mainContent {
+  background-color: transparent;
+  overflow-y: auto;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+.contentArea {
+  padding: 40px;
+  max-width: 900px;
+  margin: 0 auto;
+} 

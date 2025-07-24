@@ -1,0 +1,16 @@
+/* AccountSettingsPage.module.css */
+.accountSettingsContainer {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+.mainContent {
+  flex: 1;
+  padding: 2.5rem 3vw;
+  position: relative;
+  z-index: 1;
+}
+.mainHeaderBar {
+  margin-bottom: 2rem;
+} 

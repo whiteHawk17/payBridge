@@ -1,0 +1,54 @@
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btnPrimary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+.btnPrimary:hover {
+    background-color: var(--primary-hover);
+}
+.btnSecondary {
+    background-color: var(--background-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+.btnSecondary:hover {
+    background-color: #f3f4f6;
+}
+.btnDanger {
+    background-color: var(--danger-color);
+    color: white;
+}
+.btnDanger:hover {
+    background-color: var(--danger-hover);
+}
+/* Dark mode overrides */
+:global(.dark-mode) .btnPrimary {
+    background: linear-gradient(90deg, #7e22ce 0%, #2563eb 100%);
+}
+:global(.dark-mode) .btnPrimary:hover {
+    opacity: 0.9;
+}
+:global(.dark-mode) .btnSecondary {
+    background-color: #334155;
+    color: var(--text-primary);
+}
+:global(.dark-mode) .btnSecondary:hover {
+    background-color: #475569;
+}
+:global(.dark-mode) .btnDanger {
+    background-color: var(--danger-hover);
+}
+:global(.dark-mode) .btnDanger:hover {
+    background-color: #b91c1c;
+} 

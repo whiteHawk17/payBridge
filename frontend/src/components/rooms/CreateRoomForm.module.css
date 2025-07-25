@@ -43,6 +43,10 @@
 .active {
   border-color: var(--primary-color);
   background-color: #f0f5ff;
+  color: #111;
+}
+.active * {
+  color: #111 !important;
 }
 .roleOption input[type="radio"] {
   display: none;
@@ -66,10 +70,14 @@ textarea, input[type="number"], input[type="date"] {
   border-radius: 8px;
   border: 1px solid var(--border-color);
   background-color: var(--input-bg);
-  color: var(--text-primary);
+  color: #fff;
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   box-sizing: border-box;
+}
+textarea::placeholder, input[type="number"]::placeholder, input[type="date"]::placeholder {
+  color: #bbb;
+  opacity: 1;
 }
 textarea:focus, input:focus {
   outline: none;

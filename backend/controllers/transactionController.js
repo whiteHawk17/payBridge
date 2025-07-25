@@ -24,4 +24,7 @@ exports.aiAccept = async (req, res) => {
 exports.aiReject = async (req, res) => {
   // 1. Escalate dispute to admin (set disputeStatus = "ESCALATED")
   res.json({ message: "AI decision rejected, escalated to admin (mocked)" });
-}; 
+};
+
+
+

@@ -6,9 +6,11 @@ import axios from 'axios';
 
 interface NavbarProps {
   onSidebarToggle: () => void;
+  darkMode: boolean;
+  onDarkModeToggle: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle }) => {
+const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle, darkMode, onDarkModeToggle }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -87,6 +89,14 @@ const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle }) => {
           Create Room
         </NavLink>
         <NavLink
+          to="/rooms/join"
+          className={({ isActive }) =>
+            styles.headerNavLink + (isActive ? ' ' + styles.headerNavLinkActive : '')
+          }
+        >
+          Join Room
+        </NavLink>
+        <NavLink
           to="/profile"
           className={({ isActive }) =>
             styles.headerNavLink + (isActive ? ' ' + styles.headerNavLinkActive : '')
@@ -96,6 +106,27 @@ const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle }) => {
         </NavLink>
       </div>
       <div className={styles.headerActions}>
+        <button
+          className={styles.darkModeIconButton}
+          onClick={onDarkModeToggle}
+          aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            border: 'none',
+            background: 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 22,
+            cursor: 'pointer',
+            marginRight: 12
+          }}
+        >
+          <i className="fas fa-sun" style={{ display: darkMode ? 'none' : 'inline', color: '#111' }}></i>
+          <i className="fas fa-moon" style={{ display: darkMode ? 'inline' : 'none', color: '#fff' }}></i>
+        </button>
         <div className={styles.profileDropdown} id="profile-dropdown" ref={dropdownRef}>
           <div
             className={styles.userAvatarHeader}

@@ -139,6 +139,26 @@
     color: var(--text-secondary);
     font-size: 18px;
 }
+.darkModeIconButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #222;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  color: #222;
+  margin-right: 12px;
+}
+.darkModeIconButton:hover, .darkModeIconButton:focus {
+  border-color: #7e22ce;
+  background: rgba(30,30,35,0.08);
+  outline: none;
+}
 /* Dark mode overrides */
 :global(.dark-mode) .mainHeaderBar {
     background-color: var(--background-card);

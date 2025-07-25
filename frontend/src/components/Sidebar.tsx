@@ -36,16 +36,6 @@ const Sidebar: React.FC<SidebarProps> = ({ open, darkMode, onDarkModeToggle }) =
         )}
         <span className={styles.userMainName}>{user ? user.name : 'User'}</span>
       </div>
-      <div className={styles.darkmodeToggleContainer}>
-        <button
-          className={styles.toggleButton + (darkMode ? ' ' + styles.toggleButtonActive : '')}
-          onClick={onDarkModeToggle}
-          aria-pressed={darkMode}
-        >
-          <span className={styles.toggleThumb}></span>
-        </button>
-        <span className={styles.darkmodeLabel}>Dark Mode</span>
-      </div>
       <nav className={styles.sidebarNav}>
         <Link to="/dashboard" className={styles.navLink}><i className="fas fa-rocket"></i><span>Dashboard</span></Link>
         <Link to="/profile" className={styles.navLink}><i className="fas fa-user-circle"></i><span>Profile</span></Link>

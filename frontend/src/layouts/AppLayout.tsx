@@ -17,7 +17,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ darkMode, onDarkModeToggle }) => 
     <div className={darkMode ? 'dark-mode' : ''} style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar open={sidebarOpen} darkMode={darkMode} onDarkModeToggle={onDarkModeToggle} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Navbar onSidebarToggle={handleSidebarToggle} />
+        <Navbar onSidebarToggle={handleSidebarToggle} darkMode={darkMode} onDarkModeToggle={onDarkModeToggle} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Outlet />
         </div>

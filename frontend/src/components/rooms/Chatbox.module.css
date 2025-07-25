@@ -41,6 +41,7 @@
 }
 .received p {
   background-color: #f3f4f6;
+  color: #111;
 }
 :global(body.dark-mode) :global([class*="Chatbox_received__"]) p {
   background: #25304a !important;
@@ -69,6 +70,7 @@
   border-radius: 8px;
   padding: 10px;
   margin-right: 10px;
+  color: #111;
 }
 .chatboxInput button {
   background-color: var(--primary-color);

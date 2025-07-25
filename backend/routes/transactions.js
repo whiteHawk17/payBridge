@@ -32,6 +32,7 @@ router.post('/rooms/:roomId/transaction', (req, res) => {
   res.send('Initiate payment endpoint');
 });
 
+
 // GET /transactions/:transactionId
 router.get('/:transactionId', (req, res) => {
   // TODO: Implement get transaction details logic
@@ -76,5 +77,6 @@ router.post('/:transactionId/ai-accept', transactionController.aiAccept);
 
 // POST /transactions/:transactionId/ai-reject
 router.post('/:transactionId/ai-reject', transactionController.aiReject);
+
 
 module.exports = router; 

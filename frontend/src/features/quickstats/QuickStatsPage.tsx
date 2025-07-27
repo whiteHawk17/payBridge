@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import StatsHeader from '../../components/quickstats/StatsHeader';
 import KpiGrid from '../../components/quickstats/KpiGrid';
 import GraphsGrid from '../../components/quickstats/GraphsGrid';
+import { BACKEND_BASE_URL } from '../../api/config';
 import styles from './QuickStatsPage.module.css';
-import axios from 'axios';
 
 const filterOptions = ['Last 30 Days', 'Last 90 Days', 'All Time'] as const;
 type FilterKey = typeof filterOptions[number];
@@ -20,13 +20,29 @@ const QuickStatsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    axios.get(`/dashboard/analytics?period=${filterToPeriod[filter]}`, { withCredentials: true })
-      .then(res => {
-        setAnalytics(res.data);
+    const fetchAnalytics = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${BACKEND_BASE_URL}/dashboard/analytics?period=${filterToPeriod[filter]}`, {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setAnalytics(data);
+        } else {
+          console.error('Failed to fetch analytics');
+          setAnalytics(null);
+        }
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
+        setAnalytics(null);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+
+    fetchAnalytics();
   }, [filter]);
 
   return (

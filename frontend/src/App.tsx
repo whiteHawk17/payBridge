@@ -10,6 +10,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import DashboardPage from './features/dashboard/DashboardPage';
 import ProfilePage from './features/profile/ProfilePage';
 import CreateRoomPage from './features/rooms/CreateRoomPage';
+import JoinRoomPage from './features/rooms/JoinRoomPage';
+import RoomViewPage from './features/rooms/RoomViewPage';
 import QuickStatsPage from './features/quickstats/QuickStatsPage';
 import PastTransactionsPage from './features/pasttransactions/PastTransactionsPage';
 import ContactPage from './features/contact/ContactPage';
@@ -54,6 +56,8 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/rooms/create" element={<ProtectedRoute><CreateRoomPage /></ProtectedRoute>} />
+        <Route path="/rooms/join" element={<ProtectedRoute><JoinRoomPage /></ProtectedRoute>} />
+        <Route path="/rooms/:roomId" element={<ProtectedRoute><RoomViewPage darkMode={darkMode} /></ProtectedRoute>} />
         <Route path="/quickstats" element={<ProtectedRoute><QuickStatsPage /></ProtectedRoute>} />
         <Route path="/past_transactions" element={<ProtectedRoute><PastTransactionsPage /></ProtectedRoute>} />
         <Route path="/contact" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />

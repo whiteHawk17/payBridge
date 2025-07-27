@@ -1,22 +1,35 @@
-/* CreateRoomForm.module.css */
-.formContainer {
+/* JoinRoomPage.module.css */
+.joinRoomContainer {
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.joinRoomCard {
   background-color: var(--background-card);
   border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 40px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  max-width: 600px;
+  max-width: 500px;
   width: 100%;
 }
-.formHeader h1 {
+
+.joinRoomHeader h1 {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 5px;
+  text-align: center;
 }
-.formHeader p {
+
+.joinRoomHeader p {
   color: var(--text-secondary);
   margin-bottom: 30px;
+  text-align: center;
 }
+
 .errorMessage {
   background-color: #fee2e2;
   border: 1px solid #fecaca;
@@ -26,6 +39,7 @@
   margin-bottom: 20px;
   font-size: 14px;
 }
+
 .successMessage {
   background-color: #d1fae5;
   border: 1px solid #a7f3d0;
@@ -35,55 +49,23 @@
   margin-bottom: 20px;
   font-size: 14px;
 }
+
+.joinRoomForm {
+  width: 100%;
+}
+
 .formGroup {
   margin-bottom: 25px;
 }
+
 .formGroup label {
   display: block;
   font-weight: 600;
   margin-bottom: 8px;
   font-size: 14px;
 }
-.roleSelector {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-.roleOption {
-  border: 2px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.roleOption:hover {
-  border-color: var(--primary-color);
-}
-.active {
-  border-color: var(--primary-color);
-  background-color: #f0f5ff;
-  color: #111;
-}
-.active * {
-  color: #111 !important;
-}
-.roleOption input[type="radio"] {
-  display: none;
-}
-.roleContent i {
-  color: var(--primary-color);
-  margin-bottom: 10px;
-  font-size: 20px;
-}
-.roleContent strong {
-  display: block;
-  font-size: 16px;
-}
-.roleContent span {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-textarea, input[type="number"], input[type="date"] {
+
+.formGroup input {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
@@ -94,28 +76,25 @@ textarea, input[type="number"], input[type="date"] {
   font-size: 16px;
   box-sizing: border-box;
 }
-textarea::placeholder, input[type="number"]::placeholder, input[type="date"]::placeholder {
+
+.formGroup input::placeholder {
   color: var(--text-secondary);
   opacity: 1;
 }
-textarea:focus, input:focus {
+
+.formGroup input:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }
-.formRow {
-  display: flex;
-  gap: 20px;
-}
-.formRow .formGroup {
-  flex: 1;
-}
+
 .formActions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 15px;
   margin-top: 30px;
 }
+
 .btn {
   padding: 12px 25px;
   border: none;
@@ -123,20 +102,29 @@ textarea:focus, input:focus {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: 120px;
 }
+
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 .btnPrimary {
   background-color: var(--primary-color);
   color: #ffffff;
 }
+
 .btnPrimary:hover:not(:disabled) {
   background-color: var(--primary-hover);
 }
+
 .btnSecondary {
   background-color: var(--background-card);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
+}
+
+.btnSecondary:hover {
+  background-color: var(--border-color);
 } 

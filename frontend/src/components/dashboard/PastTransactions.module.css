@@ -1,6 +1,6 @@
 /* PastTransactions.module.css */
 .pastTransactions {
-  margin-bottom: 40px;
+  margin-bottom: 25px;
 }
 .transactionTabs {
   display: flex;
@@ -25,6 +25,21 @@
   background-color: var(--background-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
+  overflow: hidden;
+}
+
+.transactionHeader {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--background-secondary);
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 .transactionItem {
   display: grid;
@@ -33,34 +48,99 @@
   padding: 15px 20px;
   border-bottom: 1px solid var(--border-color);
   font-size: 14px;
+  line-height: 1.4;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
+
+.transactionItem:hover {
+  background-color: var(--background-secondary, #ffffff);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .transactionItem:last-child {
   border-bottom: none;
 }
+
 .transactionId, .transactionDate {
   color: var(--text-secondary);
+  font-size: 13px;
+  transition: color 0.2s ease;
 }
+
+.transactionItem:hover .transactionId,
+.transactionItem:hover .transactionDate {
+  color: var(--text-primary) !important;
+  font-weight: 700;
+  font-size: 14px;
+}
+
 .transactionTitle {
   font-weight: 600;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
+
+.transactionItem:hover .transactionTitle {
+  color: var(--text-primary) !important;
+  font-weight: 800;
+  font-size: 15px;
+}
+
 .statusTag {
   font-size: 12px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 20px;
   text-align: center;
+  transition: all 0.2s ease;
 }
+
+.transactionItem:hover .statusTag {
+  color: var(--text-primary) !important;
+  font-weight: 800;
+  background-color: var(--background-card);
+}
+
 .completed {
   background-color: #d1fae5;
   color: #065f46;
 }
+
+.successful {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.failed {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
 .transactionAmount {
   font-weight: 600;
   text-align: right;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
+
+.transactionItem:hover .transactionAmount {
+  color: var(--text-primary) !important;
+  font-weight: 800;
+  font-size: 15px;
 }
 .viewLog {
   text-align: right;
   color: var(--primary-color);
   text-decoration: none;
   font-weight: 600;
+}
+.transactionItem:hover .viewLog {
+  color: var(--text-primary) !important;
+  font-weight: 700;
 } 

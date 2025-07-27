@@ -12,26 +12,26 @@ interface GraphsGridProps {
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#a4de6c', '#d0ed57', '#fa8072'];
 
 const GraphsGrid: React.FC<GraphsGridProps> = ({ analytics, loading }) => {
-  // Prepare data for each chart
+  // Prepare data for each chart with null checks
   // 1. Transaction Volume (LineChart)
   const volumeData = analytics?.weeklyVolume?.map((val: number, idx: number) => ({
     name: `Week ${idx + 1}`,
-    volume: val,
+    volume: val || 0,
   })) || [];
 
   // 2. Transaction Status (PieChart)
   const statusData = analytics?.statusCounts
-    ? Object.entries(analytics.statusCounts).map(([key, value]) => ({ name: key, value }))
+    ? Object.entries(analytics.statusCounts).map(([key, value]) => ({ name: key, value: value || 0 }))
     : [];
 
   // 3. Transaction Value Distribution (BarChart)
   const valueDistData = analytics?.valueDistribution
-    ? Object.entries(analytics.valueDistribution).map(([key, value]) => ({ name: key, value }))
+    ? Object.entries(analytics.valueDistribution).map(([key, value]) => ({ name: key, value: value || 0 }))
     : [];
 
   // 4. Transaction by Category (RadarChart)
   const categoryData = analytics?.categoryBreakdown
-    ? Object.entries(analytics.categoryBreakdown).map(([key, value]) => ({ category: key, value }))
+    ? Object.entries(analytics.categoryBreakdown).map(([key, value]) => ({ category: key, value: value || 0 }))
     : [];
 
   return (

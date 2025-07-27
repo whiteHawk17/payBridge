@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BACKEND_BASE_URL } from '../../api/config';
 import styles from './CreateRoomForm.module.css';
 
 const CreateRoomForm: React.FC = () => {
@@ -6,12 +8,50 @@ const CreateRoomForm: React.FC = () => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [date, setDate] = useState('');
-  const [notes, setNotes] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with backend
-    alert('Room created!');
+    setIsLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await fetch(`${BACKEND_BASE_URL}/dashboard/rooms`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          role,
+          description,
+          price: parseFloat(price),
+          date
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create room');
+      }
+
+      // Room created successfully
+      setSuccess('Room created successfully! Redirecting to dashboard...');
+      
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -20,6 +60,16 @@ const CreateRoomForm: React.FC = () => {
         <h1>Create New Transaction Room</h1>
         <p>Initiate a secure transaction by defining your role and transaction details.</p>
       </div>
+      {error && (
+        <div className={styles.errorMessage}>
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className={styles.successMessage}>
+          {success}
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
           <label>Your Role</label>
@@ -29,7 +79,6 @@ const CreateRoomForm: React.FC = () => {
               <div className={styles.roleContent}>
                 <i className="fas fa-shopping-cart"></i>
                 <strong>I am a Buyer</strong>
-                <span>Purchase an item or service securely.</span>
               </div>
             </label>
             <label className={role === 'seller' ? styles.roleOption + ' ' + styles.active : styles.roleOption}>
@@ -37,7 +86,6 @@ const CreateRoomForm: React.FC = () => {
               <div className={styles.roleContent}>
                 <i className="fas fa-tag"></i>
                 <strong>I am a Seller</strong>
-                <span>Sell an item or offer a service with peace of mind.</span>
               </div>
             </label>
           </div>
@@ -56,13 +104,11 @@ const CreateRoomForm: React.FC = () => {
             <input type="date" id="completion-date" required value={date} onChange={e => setDate(e.target.value)} />
           </div>
         </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="notes">Additional Notes (Optional)</label>
-          <textarea id="notes" rows={3} placeholder="Any special instructions, conditions, or delivery details?" value={notes} onChange={e => setNotes(e.target.value)} />
-        </div>
         <div className={styles.formActions}>
-          <button type="button" className={styles.btn + ' ' + styles.btnSecondary} onClick={() => window.location.href = '/dashboard'}>Cancel</button>
-          <button type="submit" className={styles.btn + ' ' + styles.btnPrimary}>Create Room</button>
+          <button type="button" className={styles.btn + ' ' + styles.btnSecondary} onClick={() => navigate('/dashboard')}>Cancel</button>
+          <button type="submit" className={styles.btn + ' ' + styles.btnPrimary} disabled={isLoading}>
+            {isLoading ? 'Creating...' : 'Create Room'}
+          </button>
         </div>
       </form>
     </div>

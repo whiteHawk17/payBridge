@@ -20,11 +20,11 @@ const QuickStats: React.FC = () => {
   if (!stats) return <section className={styles.quickStats}><h2>Quick Stats</h2><p>Failed to load stats.</p></section>;
 
   const statList = [
-    { label: 'Total Transactions', icon: 'fas fa-rocket', value: stats.totalTransactions },
-    { label: 'Successful Transactions', icon: 'fas fa-history', value: stats.successfulTransactions },
-    { label: 'Pending Transactions', icon: 'fas fa-hourglass-half', value: stats.pendingTransactions },
-    { label: 'Funds in Escrow', icon: 'fas fa-shield-alt', value: ` [20B9]${stats.fundsInEscrow}` },
-    { label: 'Disputes Resolved', icon: 'fas fa-gavel', value: stats.disputesResolved },
+    { label: 'Total Transactions', icon: 'fas fa-rocket', value: stats.totalTransactions || 0 },
+    { label: 'Successful Transactions', icon: 'fas fa-history', value: stats.successfulTransactions || 0 },
+    { label: 'Pending Transactions', icon: 'fas fa-hourglass-half', value: stats.pendingTransactions || 0 },
+    { label: 'Funds in Escrow', icon: 'fas fa-shield-alt', value: `₹${stats.fundsInEscrow || 0}` },
+    { label: 'Disputes Resolved', icon: 'fas fa-gavel', value: stats.disputesResolved || 0 },
   ];
 
   return (

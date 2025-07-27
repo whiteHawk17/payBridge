@@ -12,8 +12,14 @@ router.get('/rooms/active', jwtAuth, dashboardController.getActiveRooms);
 // POST /rooms
 router.post('/rooms', jwtAuth, dashboardController.createRoom);
 
+// POST /rooms/join
+router.post('/rooms/join', jwtAuth, dashboardController.joinRoom);
+
 // GET /rooms/:roomId
 router.get('/rooms/:roomId', jwtAuth, dashboardController.getRoomDetails);
+
+// GET /transactions/:transactionId
+router.get('/transactions/:transactionId', jwtAuth, dashboardController.getTransactionDetails);
 
 // GET /profile
 router.get('/profile', jwtAuth, dashboardController.getProfile);

@@ -1,6 +1,6 @@
 /* ActiveRooms.module.css */
 .activeRooms {
-  margin-bottom: 40px;
+  margin-bottom: 25px;
 }
 .roomsGrid {
   display: grid;
@@ -13,12 +13,16 @@
   border-radius: 12px;
   padding: 20px;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 140px;
 }
 .roomCardHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 .status {
   font-size: 12px;
@@ -40,11 +44,14 @@
   color: var(--text-secondary);
   font-size: 14px;
   margin-bottom: 15px;
+  font-weight: 500;
 }
 .roomPrice {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 15px;
+  color: var(--text-primary);
+  line-height: 1;
 }
 .roomParticipants {
   display: flex;

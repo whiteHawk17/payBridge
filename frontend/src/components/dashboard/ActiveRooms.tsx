@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './ActiveRooms.module.css';
 import { BACKEND_BASE_URL } from '../../api/config';
 
 const ActiveRooms: React.FC = () => {
   const [rooms, setRooms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${BACKEND_BASE_URL}/dashboard/rooms/active`, { credentials: 'include' })
@@ -16,6 +18,10 @@ const ActiveRooms: React.FC = () => {
       .catch(() => setLoading(false));
   }, []);
 
+  const handleViewRoom = (roomId: string) => {
+    navigate('/rooms/join', { state: { roomId } });
+  };
+
   if (loading) return <section className={styles.activeRooms}><h2>Active Rooms</h2><p>Loading...</p></section>;
   if (!rooms.length) return <section className={styles.activeRooms}><h2>Active Rooms</h2><p>No active rooms found.</p></section>;
 
@@ -26,7 +32,7 @@ const ActiveRooms: React.FC = () => {
         {rooms.map((room, idx) => (
           <div className={styles.roomCard} key={room._id || idx}>
             <div className={styles.roomCardHeader}>
-              <h3>{room._id}</h3>
+              <h3>{room.description || 'No description'}</h3>
               <span className={styles.status + ' ' + styles[room.status?.toLowerCase() || '']}>{room.status}</span>
             </div>
             <p className={styles.roomPrice}>{room.amount ? `₹${room.amount}` : 'No amount'}</p>
@@ -47,7 +53,12 @@ const ActiveRooms: React.FC = () => {
                 ))}
               </div>
             </div>
-            <button className={styles.btn + ' ' + styles.btnPrimary + ' ' + styles.viewDetailsBtn}>View Details</button>
+            <button 
+              className={styles.btn + ' ' + styles.btnPrimary + ' ' + styles.viewDetailsBtn}
+              onClick={() => handleViewRoom(room._id)}
+            >
+              View Room
+            </button>
           </div>
         ))}
       </div>

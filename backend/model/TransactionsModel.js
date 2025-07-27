@@ -15,6 +15,8 @@ const transactionSchema = new Schema(
     deliveryProofURL:   { type: String, default: null },
     verificationStatus: { type: String, enum: ["PENDING","VERIFIED","REJECTED"], default: "PENDING" },
     flagged: { type: Boolean, default: false },
+    description:        { type: String, default: null },
+    completionDate:     { type: Date, default: null },
   },
   { timestamps: true }
 );

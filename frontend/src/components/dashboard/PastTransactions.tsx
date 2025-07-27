@@ -28,13 +28,21 @@ const PastTransactions: React.FC = () => {
         <button className={activeTab === 'Archived' ? styles.tabBtn + ' ' + styles.active : styles.tabBtn} onClick={() => setActiveTab('Archived')}>Archived</button>
       </div>
       <div className={styles.transactionList}>
+        <div className={styles.transactionHeader}>
+          <span>ID</span>
+          <span>Category</span>
+          <span>Date</span>
+          <span>Status</span>
+          <span>Amount</span>
+          <span>Action</span>
+        </div>
         {transactions.filter(t => (activeTab === 'Completed' ? t.status === 'SUCCESS' : t.status !== 'SUCCESS')).map((t, idx) => (
           <div className={styles.transactionItem} key={t.id || idx}>
-            <span className={styles.transactionId}>ID: {t.id}</span>
+            <span className={styles.transactionId}>{t.id}</span>
             <span className={styles.transactionTitle}>{t.category}</span>
             <span className={styles.transactionDate}>{new Date(t.date).toLocaleDateString()}</span>
-            <span className={styles.statusTag + ' ' + styles.completed}>{t.status}</span>
-            <span className={styles.transactionAmount}>{t.amount}</span>
+            <span className={`${styles.statusTag} ${styles[t.status.toLowerCase()] || styles.pending}`}>{t.status}</span>
+            <span className={styles.transactionAmount}>₹{t.amount}</span>
             <a href="#" className={styles.viewLog}>View Log</a>
           </div>
         ))}

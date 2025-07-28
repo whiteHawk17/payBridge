@@ -9,11 +9,135 @@
   height: 750px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+
 .chatboxHeader {
   padding: 20px;
   border-bottom: 1px solid var(--border-color);
   font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.headerLeft h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.connectionStatus {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.connected {
+  background-color: #10b981;
+}
+
+.disconnected {
+  background-color: #ef4444;
+}
+
+/* Video Call Controls */
+.videoCallControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.videoCallButton {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.videoCallButton:hover:not(:disabled) {
+  background: var(--primary-color-dark, #0056b3);
+  transform: scale(1.05);
+}
+
+.videoCallButton:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.videoControlButton {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.videoControlButton:hover {
+  background: var(--border-color);
+  transform: scale(1.05);
+}
+
+.videoControlButton.muted {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.videoControlButton.videoOff {
+  background: #6b7280;
+  color: white;
+  border-color: #6b7280;
+}
+
+.endCallButton {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.endCallButton:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
 .chatboxMessages {
   flex-grow: 1;
   padding: 20px;
@@ -21,28 +145,93 @@
   display: flex;
   flex-direction: column;
 }
+
 .message {
   margin-bottom: 15px;
   max-width: 80%;
 }
+
 .message p {
   padding: 10px 15px;
   border-radius: 12px;
   margin: 0;
 }
+
 .timestamp {
   font-size: 12px;
   color: var(--text-secondary);
   margin-top: 5px;
   display: block;
 }
+
+.messageSender {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.senderAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.senderAvatarFallback {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.senderName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.messageFooter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.messageStatus {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.statusSent {
+  color: #9ca3af;
+}
+
+.statusDelivered {
+  color: #6b7280;
+}
+
+.statusRead {
+  color: #3b82f6;
+}
+
 .received {
   align-self: flex-start;
 }
+
 .received p {
   background-color: #f3f4f6;
   color: #111;
 }
+
 :global(body.dark-mode) :global([class*="Chatbox_received__"]) p {
   background: #25304a !important;
   color: #fff !important;
@@ -51,27 +240,226 @@
   padding: 10px 15px !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
 }
+
 .sent {
   align-self: flex-end;
   text-align: right;
 }
+
 .sent p {
   background-color: var(--primary-color);
   color: white;
 }
+
+.typingIndicator {
+  align-self: flex-start;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* File Attachments */
+.attachments {
+  margin-top: 8px;
+}
+
+.attachment {
+  margin-bottom: 8px;
+}
+
+.imageAttachment img {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.videoAttachment video {
+  max-width: 300px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.audioAttachment audio {
+  width: 250px;
+  height: 40px;
+}
+
+.fileAttachment {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  max-width: 250px;
+}
+
+.fileIcon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.fileInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.fileName {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  display: block;
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.downloadButton {
+  font-size: 16px;
+  text-decoration: none;
+  color: var(--primary-color);
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.downloadButton:hover {
+  background-color: var(--border-color);
+}
+
+/* Uploaded Files Preview */
+.uploadedFiles {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-color);
+  background: var(--background-secondary);
+}
+
+.uploadedFilesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.uploadedFilesHeader button {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.uploadedFilesHeader button:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.uploadedFilesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.uploadedFileItem {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 11px;
+  max-width: 150px;
+}
+
+.uploadedFileItem .fileName {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 4px;
+}
+
+.uploadedFileItem button {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.uploadedFileItem button:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
 .chatboxInput {
   display: flex;
   padding: 20px;
   border-top: 1px solid var(--border-color);
+  gap: 8px;
 }
+
+.attachButton {
+  background: var(--background-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.attachButton:hover:not(:disabled) {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.attachButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .chatboxInput input {
   flex-grow: 1;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px;
-  margin-right: 10px;
   color: #111;
 }
+
+.chatboxInput input:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
 .chatboxInput button {
   background-color: var(--primary-color);
   color: white;
@@ -80,4 +468,14 @@
   width: 40px;
   height: 40px;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chatboxInput button:hover:not(:disabled) {
+  background-color: var(--primary-color-dark, #0056b3);
+}
+
+.chatboxInput button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
 } 

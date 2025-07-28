@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import styles from './dashboard/HeaderBar.module.css';
 import { BACKEND_BASE_URL } from '../api/config';
-import { NavLink, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 interface NavbarProps {
@@ -40,8 +40,13 @@ const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle, darkMode, onDarkModeTo
   }, [dropdownOpen]);
 
   useEffect(() => {
-    axios.get('/profile', { withCredentials: true })
-      .then(res => setUser(res.data))
+    fetch(`${BACKEND_BASE_URL}/auth/me`, { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Navbar User Data:', data); // Debug log
+        console.log('Navbar Photo URL:', data.photo); // Debug log
+        setUser(data);
+      })
       .catch(() => setUser(null));
   }, []);
 
@@ -136,7 +141,16 @@ const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle, darkMode, onDarkModeTo
             tabIndex={0}
           >
             {user && user.photo ? (
-              <img src={user.photo} alt={user.name} style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+              <img 
+                src={user.photo.startsWith('http') ? user.photo : BACKEND_BASE_URL + user.photo} 
+                alt={user.name} 
+                style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }}
+                onError={(e) => {
+                  console.error('Image failed to load:', e.currentTarget.src);
+                  console.log('User photo field:', user.photo);
+                  console.log('BACKEND_BASE_URL:', BACKEND_BASE_URL);
+                }}
+              />
             ) : (
               <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#5b21b6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 18 }}>
                 {user ? getInitials(user.name) : 'AM'}

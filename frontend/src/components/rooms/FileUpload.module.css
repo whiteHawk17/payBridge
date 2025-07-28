@@ -1,0 +1,461 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--background-card);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: var(--border-color);
+}
+
+.content {
+  padding: 20px;
+}
+
+.cameraSection,
+.uploadSection {
+  margin-bottom: 24px;
+}
+
+.cameraSection h4,
+.uploadSection h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Camera Device Selector */
+.cameraSelector {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.cameraSelector label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.cameraSelector select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-card);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.cameraSelector select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Camera Start Section */
+.cameraStart {
+  text-align: center;
+}
+
+.cameraButton {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  margin-bottom: 8px;
+}
+
+.cameraButton:hover:not(:disabled) {
+  background: var(--primary-color-dark, #0056b3);
+}
+
+.cameraButton:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+/* Camera Error Handling */
+.cameraError {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+.cameraError p {
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.retryButton {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retryButton:hover {
+  background: #b91c1c;
+}
+
+.cameraContainer {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cameraVideo {
+  width: 100% !important;
+  height: 200px !important;
+  object-fit: cover;
+  background: #000;
+  display: block !important;
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+/* Camera Loading Overlay */
+.cameraLoading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+.cameraLoading p {
+  margin: 0;
+  text-align: center;
+}
+
+.cameraControls {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: var(--background-secondary);
+}
+
+.cameraControls button {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-card);
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.cameraControls button:hover:not(:disabled) {
+  background: var(--border-color);
+}
+
+.cameraControls button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.capturedImage {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.capturedImage img {
+  max-width: 100%;
+  max-height: 150px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.capturedImage span {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.dropZone {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--background-secondary);
+}
+
+.dropZone:hover,
+.dragActive {
+  border-color: var(--primary-color);
+  background: rgba(var(--primary-color-rgb, 0, 86, 179), 0.05);
+}
+
+.dropZoneContent {
+  pointer-events: none;
+}
+
+.uploadIcon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.dropZone p {
+  margin: 8px 0;
+  color: var(--text-secondary);
+}
+
+.fileTypes {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.selectedFiles {
+  margin-top: 20px;
+}
+
+.selectedFiles h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fileItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.fileInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.fileName {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.removeButton {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  transition: background-color 0.2s;
+}
+
+.removeButton:hover {
+  background: #dc2626;
+}
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 16px 0;
+  border: 1px solid #fecaca;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.uploadButton,
+.cancelButton {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.uploadButton {
+  background: var(--primary-color);
+  color: white;
+}
+
+.uploadButton:hover:not(:disabled) {
+  background: var(--primary-color-dark, #0056b3);
+}
+
+.uploadButton:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.cancelButton:hover {
+  background: var(--border-color);
+}
+
+/* Dark mode adjustments */
+:global(body.dark-mode) .modal {
+  background: #1a1a1a;
+  border-color: #333;
+}
+
+:global(body.dark-mode) .dropZone {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+:global(body.dark-mode) .dropZone:hover,
+:global(body.dark-mode) .dragActive {
+  border-color: var(--primary-color);
+  background: rgba(var(--primary-color-rgb, 0, 86, 179), 0.1);
+}
+
+:global(body.dark-mode) .fileItem {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+:global(body.dark-mode) .cameraControls {
+  background: #2a2a2a;
+}
+
+:global(body.dark-mode) .cameraControls button {
+  background: #1a1a1a;
+  border-color: #444;
+  color: #fff;
+}
+
+:global(body.dark-mode) .cameraControls button:hover {
+  background: #333;
+}
+
+:global(body.dark-mode) .cancelButton {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
+
+:global(body.dark-mode) .cancelButton:hover {
+  background: #333;
+}
+
+:global(body.dark-mode) .cameraSelector {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+:global(body.dark-mode) .cameraSelector select {
+  background: #1a1a1a;
+  border-color: #444;
+  color: #fff;
+}
+
+:global(body.dark-mode) .cameraError {
+  background: #2a1a1a;
+  border-color: #4a1a1a;
+  color: #ff6b6b;
+} 

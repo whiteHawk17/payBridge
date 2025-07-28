@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import styles from './dashboard/Sidebar.module.css';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import styles from './dashboard/Sidebar.module.css';
+import { BACKEND_BASE_URL } from '../api/config';
 
 interface SidebarProps {
   open: boolean;
@@ -13,8 +13,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, darkMode, onDarkModeToggle }) =
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    axios.get('/profile', { withCredentials: true })
-      .then(res => setUser(res.data))
+    fetch(`${BACKEND_BASE_URL}/auth/me`, { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setUser(data))
       .catch(() => setUser(null));
   }, []);
 
@@ -30,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, darkMode, onDarkModeToggle }) =
     <aside className={styles.sidebar} id="sidebar" style={{ display: open ? 'flex' : 'none' }}>
       <div className={styles.sidebarProfile}>
         {user && user.photo ? (
-          <img src={user.photo} alt={user.name} className={styles.userAvatar} style={{ width: 40, height: 40, borderRadius: '50%' }} />
+          <img src={user.photo.startsWith('http') ? user.photo : BACKEND_BASE_URL + user.photo} alt={user.name} className={styles.userAvatar} style={{ width: 40, height: 40, borderRadius: '50%' }} />
         ) : (
           <div className={styles.userAvatar}>{user ? getInitials(user.name) : 'AM'}</div>
         )}

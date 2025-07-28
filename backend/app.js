@@ -4,6 +4,25 @@ const app = express();
 const passport = require('./middleware/passport');
 const { PORT } = require('./config/env');
 const connectDB = require('./config/db');
+const http = require('http');
+const socketIo = require('socket.io');
+const path = require('path');
+
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:3001",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+// Socket.IO connection handling
+const { setupSocketHandlers } = require('./utils/socketHandlers');
+setupSocketHandlers(io);
 
 
 app.use(express.json());
@@ -30,12 +49,16 @@ const transactionRoutes = require('./routes/transactions');
 const auditLogRoutes = require('./routes/auditLogs');
 const adminRoutes = require('./routes/admin');
 const dashboardRoutes = require('./routes/dashboard');
+const uploadRoutes = require('./routes/upload');
 const cors = require('cors');
    
 app.use(cors({
   origin: 'http://localhost:3001',
   credentials: true // if you use cookies
 }));
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/auth', authRoutes);
 app.use('/', userRoutes);
 app.use('/rooms', roomRoutes);
@@ -44,13 +67,14 @@ app.use('/transactions', transactionRoutes);
 app.use('/audit-logs', auditLogRoutes);
 app.use('/admin', adminRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/upload', uploadRoutes);
 
 
 // DB Connect
 connectDB();
 
 // Start Server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 

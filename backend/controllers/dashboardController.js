@@ -95,39 +95,46 @@ exports.createRoom = async (req, res) => {
     };
 
     // Set buyer or seller based on role
+    console.log(`🔍 Creating room with role: ${role} for user: ${userId}`);
+    
     if (role === 'buyer') {
       roomData.buyerId = userId;
+      console.log(`✅ Room created with BUYER: ${userId}`);
     } else if (role === 'seller') {
       roomData.sellerId = userId;
+      console.log(`✅ Room created with SELLER: ${userId}`);
     } else {
-      return res.status(400).json({ error: 'Invalid role' });
+      console.log(`❌ Invalid role: ${role}`);
+      return res.status(400).json({ error: 'Invalid role - must be "buyer" or "seller"' });
     }
+    
+    console.log(`📝 Final roomData:`, roomData);
 
     const newRoom = await RoomsModel.create(roomData);
 
-    // Create a transaction record with additional details
-    const transactionData = {
-      roomId: newRoom._id,
-      buyerId: userId, // Set to current user initially
-      sellerId: userId, // Set to current user initially
-      amount: parseFloat(price),
-      commission: 0.05, // 5% commission
-      paymentStatus: 'INITIATED',
+    // Store room details for later transaction creation
+    await RoomsModel.findByIdAndUpdate(newRoom._id, {
+      price: parseFloat(price),
       description: description,
       completionDate: new Date(date)
-    };
-
-    const newTransaction = await TransactionsModel.create(transactionData);
-
-    // Update room with transaction ID
-    await RoomsModel.findByIdAndUpdate(newRoom._id, {
-      transactionId: newTransaction._id
     });
 
+    // Populate the room with user details for debugging
+    const populatedRoom = await RoomsModel.findById(newRoom._id)
+      .populate('buyerId', 'name email photo')
+      .populate('sellerId', 'name email photo');
+    
+    console.log('=== ROOM CREATED DEBUG ===');
+    console.log('Room ID:', populatedRoom._id);
+    console.log('Buyer ID:', populatedRoom.buyerId?._id);
+    console.log('Seller ID:', populatedRoom.sellerId?._id);
+    console.log('Buyer Name:', populatedRoom.buyerId?.name);
+    console.log('Seller Name:', populatedRoom.sellerId?.name);
+    console.log('=== END ROOM CREATED DEBUG ===');
+    
     res.status(201).json({
       message: 'Room created successfully',
-      room: newRoom,
-      transaction: newTransaction
+      room: populatedRoom
     });
   } catch (err) {
     console.error('Create room error:', err);
@@ -137,10 +144,41 @@ exports.createRoom = async (req, res) => {
 
 exports.getRoomDetails = async (req, res) => {
   try {
-    const room = await RoomsModel.findById(req.params.roomId);
+    const room = await RoomsModel.findById(req.params.roomId)
+      .populate('buyerId', 'name email photo')
+      .populate('sellerId', 'name email photo');
+    
     if (!room) return res.status(404).json({ error: 'Room not found' });
+    
+    // Validate room has exactly 2 participants
+    const hasBuyer = !!room.buyerId;
+    const hasSeller = !!room.sellerId;
+    
+    if (!hasBuyer || !hasSeller) {
+      console.log(`⚠️ Room ${room._id} is incomplete - Buyer: ${hasBuyer}, Seller: ${hasSeller}`);
+    } else {
+      console.log(`✅ Room ${room._id} has both buyer and seller`);
+    }
+    
+    // Add debug logging
+    console.log('=== ROOM DETAILS DEBUG ===');
+    console.log('Room ID:', room._id);
+    console.log('Buyer ID:', room.buyerId?._id);
+    console.log('Seller ID:', room.sellerId?._id);
+    console.log('Buyer Name:', room.buyerId?.name);
+    console.log('Seller Name:', room.sellerId?.name);
+    console.log('Requesting User ID:', req.user.id);
+    console.log('Is User Buyer?', room.buyerId?._id?.toString() === req.user.id);
+    console.log('Is User Seller?', room.sellerId?._id?.toString() === req.user.id);
+    console.log('Raw room.buyerId:', room.buyerId);
+    console.log('Raw room.sellerId:', room.sellerId);
+    console.log('room.buyerId type:', typeof room.buyerId);
+    console.log('room.sellerId type:', typeof room.sellerId);
+    console.log('=== END ROOM DETAILS DEBUG ===');
+    
     res.json(room);
   } catch (err) {
+    console.error('Error fetching room details:', err);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -178,10 +216,13 @@ exports.joinRoom = async (req, res) => {
     let updateData = {};
     if (!room.buyerId) {
       updateData.buyerId = userId;
+      console.log(`✅ User ${userId} assigned as BUYER to room ${roomId}`);
     } else if (!room.sellerId) {
       updateData.sellerId = userId;
+      console.log(`✅ User ${userId} assigned as SELLER to room ${roomId}`);
     } else {
-      return res.status(400).json({ error: 'Room is full' });
+      console.log(`❌ Room ${roomId} is full - Buyer: ${room.buyerId}, Seller: ${room.sellerId}`);
+      return res.status(400).json({ error: 'Room is full (maximum 2 participants allowed)' });
     }
 
     // Update the room
@@ -189,23 +230,38 @@ exports.joinRoom = async (req, res) => {
       roomId,
       updateData,
       { new: true }
-    );
+    ).populate('buyerId', 'name email photo')
+     .populate('sellerId', 'name email photo');
 
-    // Update the transaction to include the new participant
-    const transaction = await TransactionsModel.findOne({ roomId });
-    if (transaction) {
-      const transactionUpdate = {};
-      if (!transaction.buyerId && !room.buyerId) {
-        transactionUpdate.buyerId = userId;
-      } else if (!transaction.sellerId && !room.sellerId) {
-        transactionUpdate.sellerId = userId;
-      }
-      
-      if (Object.keys(transactionUpdate).length > 0) {
-        await TransactionsModel.findByIdAndUpdate(transaction._id, transactionUpdate);
-      }
+    // Create transaction when both buyer and seller are assigned
+    if (updatedRoom.buyerId && updatedRoom.sellerId) {
+      const transactionData = {
+        roomId: updatedRoom._id,
+        buyerId: updatedRoom.buyerId,
+        sellerId: updatedRoom.sellerId,
+        amount: updatedRoom.price || 0,
+        commission: 0.05, // 5% commission
+        paymentStatus: 'INITIATED',
+        description: updatedRoom.description || '',
+        completionDate: updatedRoom.completionDate || new Date()
+      };
+
+      const newTransaction = await TransactionsModel.create(transactionData);
+
+      // Update room with transaction ID
+      await RoomsModel.findByIdAndUpdate(updatedRoom._id, {
+        transactionId: newTransaction._id
+      });
     }
 
+    console.log('=== ROOM JOINED DEBUG ===');
+    console.log('Room ID:', updatedRoom._id);
+    console.log('Buyer ID:', updatedRoom.buyerId?._id);
+    console.log('Seller ID:', updatedRoom.sellerId?._id);
+    console.log('Buyer Name:', updatedRoom.buyerId?.name);
+    console.log('Seller Name:', updatedRoom.sellerId?.name);
+    console.log('=== END ROOM JOINED DEBUG ===');
+    
     res.json({
       message: 'Successfully joined the room',
       room: updatedRoom

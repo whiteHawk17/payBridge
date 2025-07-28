@@ -9,6 +9,8 @@ const ProfileInfoCard: React.FC = () => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   useEffect(() => {
     axios.get('/profile', { withCredentials: true })
@@ -21,20 +23,56 @@ const ProfileInfoCard: React.FC = () => {
   }, []);
 
   const handleEdit = () => setEditing(true);
-  const handleCancel = () => { setEditing(false); setName(profile.name); setError(''); };
+  const handleCancel = () => { setEditing(false); setName(profile.name); setError(''); setAvatarFile(null); setAvatarPreview(null); };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSave = () => {
     setSaving(true);
     setError('');
-    axios.put('/profile', { name }, { withCredentials: true })
-      .then(res => {
-        setProfile(res.data);
-        setEditing(false);
-        setSaving(false);
-      })
-      .catch(err => {
-        setError('Failed to update.');
-        setSaving(false);
-      });
+    if (avatarFile) {
+      // Upload avatar first
+      const formData = new FormData();
+      formData.append('photo', avatarFile);
+      axios.post('/profile/avatar', formData, { withCredentials: true })
+        .then(res => {
+          // Update profile with new name and photo
+          axios.put('/profile', { name }, { withCredentials: true })
+            .then(res2 => {
+              setProfile(res2.data);
+              setEditing(false);
+              setSaving(false);
+              setAvatarFile(null);
+              setAvatarPreview(null);
+              window.location.reload(); // Reload to update avatar everywhere
+            })
+            .catch(() => {
+              setError('Failed to update.');
+              setSaving(false);
+            });
+        })
+        .catch(() => {
+          setError('Failed to upload avatar.');
+          setSaving(false);
+        });
+    } else {
+      axios.put('/profile', { name }, { withCredentials: true })
+        .then(res => {
+          setProfile(res.data);
+          setEditing(false);
+          setSaving(false);
+        })
+        .catch(() => {
+          setError('Failed to update.');
+          setSaving(false);
+        });
+    }
   };
 
   if (loading) return <div className={styles.profileCard}><p>Loading...</p></div>;
@@ -59,12 +97,23 @@ const ProfileInfoCard: React.FC = () => {
           <span className={styles.infoLabel}>Email Address</span>
           <span className={styles.infoValue}>{profile.email}</span>
         </div>
-        {profile.photo && (
-          <div className={styles.infoRow}>
-            <span className={styles.infoLabel}>Photo</span>
-            <img src={profile.photo} alt={profile.name} style={{ width: 48, height: 48, borderRadius: '50%' }} />
-          </div>
-        )}
+        <div className={styles.infoRow}>
+          <span className={styles.infoLabel}>Photo</span>
+          {editing ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <label className={styles.avatarUploadLabel}>
+                <input type="file" accept="image/*" onChange={handleAvatarChange} disabled={saving} style={{ display: 'none' }} />
+                <span className={styles.avatarUploadBtn}>Upload</span>
+              </label>
+              {(avatarPreview || profile.photo) && (
+                <img src={avatarPreview || profile.photo} alt={profile.name} style={{ width: 48, height: 48, borderRadius: '50%' }} />
+              )}
+              {avatarPreview && <button onClick={() => { setAvatarFile(null); setAvatarPreview(null); }} className={styles.btn + ' ' + styles.btnSecondary} style={{ fontSize: 12 }}>Remove</button>}
+            </div>
+          ) : (
+            profile.photo ? <img src={profile.photo} alt={profile.name} style={{ width: 48, height: 48, borderRadius: '50%' }} /> : <span className={styles.infoValue}>{profile.name ? profile.name[0] : '?'}</span>
+          )}
+        </div>
         {editing && (
           <div className={styles.editActions}>
             <button className={styles.btn + ' ' + styles.btnPrimary} onClick={handleSave} disabled={saving}>Save</button>

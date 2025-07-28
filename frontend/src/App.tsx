@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { SocketProvider } from './contexts/SocketContext';
 import PublicLayout from './layouts/PublicLayout';
 import AppLayout from './layouts/AppLayout';
 import AdminLayout from './layouts/AdminLayout';
@@ -20,6 +21,8 @@ import AdminDashboardPage from './features/admin/AdminDashboardPage';
 import UsersManagementPage from './features/admin/UsersManagementPage';
 import SettingsPage from './features/admin/SettingsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import SocketTest from './components/rooms/SocketTest';
+import CameraTest from './components/rooms/CameraTest';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -45,34 +48,38 @@ function App() {
   const handleDarkModeToggle = () => setDarkMode((prev) => !prev);
 
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-      </Route>
-      {/* User protected routes */}
-      <Route element={<AppLayout darkMode={darkMode} onDarkModeToggle={handleDarkModeToggle} />}>
-        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-        <Route path="/rooms/create" element={<ProtectedRoute><CreateRoomPage /></ProtectedRoute>} />
-        <Route path="/rooms/join" element={<ProtectedRoute><JoinRoomPage /></ProtectedRoute>} />
-        <Route path="/rooms/:roomId" element={<ProtectedRoute><RoomViewPage darkMode={darkMode} /></ProtectedRoute>} />
-        <Route path="/quickstats" element={<ProtectedRoute><QuickStatsPage /></ProtectedRoute>} />
-        <Route path="/past_transactions" element={<ProtectedRoute><PastTransactionsPage /></ProtectedRoute>} />
-        <Route path="/contact" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />
-        <Route path="/account_settings" element={<ProtectedRoute><AccountSettingsPage /></ProtectedRoute>} />
-      </Route>
-      {/* Admin protected routes */}
-      <Route element={<AdminLayout />}>
-        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-        <Route path="/admin/users" element={<UsersManagementPage />} />
-        <Route path="/admin/settings" element={<SettingsPage />} />
-        {/* Add more admin routes here */}
-      </Route>
-      {/* 404 */}
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <SocketProvider>
+      <Routes>
+        {/* Public routes */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
+        {/* User protected routes */}
+        <Route element={<AppLayout darkMode={darkMode} onDarkModeToggle={handleDarkModeToggle} />}>
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/rooms/create" element={<ProtectedRoute><CreateRoomPage /></ProtectedRoute>} />
+          <Route path="/rooms/join" element={<ProtectedRoute><JoinRoomPage /></ProtectedRoute>} />
+          <Route path="/rooms/:roomId" element={<ProtectedRoute><RoomViewPage darkMode={darkMode} /></ProtectedRoute>} />
+          <Route path="/quickstats" element={<ProtectedRoute><QuickStatsPage /></ProtectedRoute>} />
+          <Route path="/past_transactions" element={<ProtectedRoute><PastTransactionsPage /></ProtectedRoute>} />
+          <Route path="/contact" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />
+          <Route path="/account_settings" element={<ProtectedRoute><AccountSettingsPage /></ProtectedRoute>} />
+        <Route path="/socket-test" element={<ProtectedRoute><SocketTest /></ProtectedRoute>} />
+        <Route path="/camera-test" element={<ProtectedRoute><CameraTest /></ProtectedRoute>} />
+        </Route>
+        {/* Admin protected routes */}
+        <Route element={<AdminLayout />}>
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/users" element={<UsersManagementPage />} />
+          <Route path="/admin/settings" element={<SettingsPage />} />
+          {/* Add more admin routes here */}
+        </Route>
+        {/* 404 */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </SocketProvider>
   );
 }
 

@@ -1,0 +1,227 @@
+.container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.container h2 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.section {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.section h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.status {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.status:contains('granted') {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status:contains('denied') {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status:contains('unknown') {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.permissionButton {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.permissionButton:hover {
+  background: #0056b3;
+}
+
+.deviceList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.deviceItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f9fa;
+}
+
+.deviceItem input[type="radio"] {
+  margin: 0;
+}
+
+.deviceItem label {
+  margin: 0;
+  cursor: pointer;
+  flex: 1;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.startButton,
+.stopButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.startButton {
+  background: #28a745;
+  color: white;
+}
+
+.startButton:hover:not(:disabled) {
+  background: #218838;
+}
+
+.startButton:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.stopButton {
+  background: #dc3545;
+  color: white;
+}
+
+.stopButton:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.stopButton:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  border: 1px solid #f5c6cb;
+}
+
+.videoContainer {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+.video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.loading p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.debug {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.debug p {
+  margin: 5px 0;
+}
+
+.debug strong {
+  color: #495057;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: #1a1a1a;
+    color: #fff;
+  }
+  
+  .section {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+  
+  .container h2,
+  .section h3 {
+    color: #fff;
+  }
+  
+  .deviceItem {
+    background: #333;
+    border-color: #555;
+  }
+  
+  .debug {
+    background: #333;
+    color: #fff;
+  }
+  
+  .debug strong {
+    color: #ccc;
+  }
+} 

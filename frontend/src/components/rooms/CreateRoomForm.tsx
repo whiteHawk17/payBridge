@@ -4,7 +4,7 @@ import { BACKEND_BASE_URL } from '../../api/config';
 import styles from './CreateRoomForm.module.css';
 
 const CreateRoomForm: React.FC = () => {
-  const [role, setRole] = useState<'buyer' | 'seller'>('buyer');
+  const [role, setRole] = useState<'buyer' | 'seller'>();
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [date, setDate] = useState('');
@@ -15,23 +15,34 @@ const CreateRoomForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate that a role is selected
+    if (!role) {
+      setError('Please select your role (Buyer or Seller)');
+      return;
+    }
+    
     setIsLoading(true);
     setError('');
     setSuccess('');
 
     try {
+      const requestBody = {
+        role,
+        description,
+        price: parseFloat(price),
+        date
+      };
+      
+      console.log('Submitting form with role:', role, 'Full request body:', requestBody);
+      
       const response = await fetch(`${BACKEND_BASE_URL}/dashboard/rooms`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({
-          role,
-          description,
-          price: parseFloat(price),
-          date
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -41,11 +52,11 @@ const CreateRoomForm: React.FC = () => {
       }
 
       // Room created successfully
-      setSuccess('Room created successfully! Redirecting to dashboard...');
+      setSuccess('Room created successfully! Redirecting to room...');
       
-      // Redirect to dashboard after a short delay
+      // Redirect to the created room after a short delay
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate(`/rooms/${data.room._id}`);
       }, 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -72,7 +83,7 @@ const CreateRoomForm: React.FC = () => {
       )}
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
-          <label>Your Role</label>
+          <label>Your Role <span style={{color: 'red'}}>*</span></label>
           <div className={styles.roleSelector}>
             <label className={role === 'buyer' ? styles.roleOption + ' ' + styles.active : styles.roleOption}>
               <input type="radio" name="role" value="buyer" checked={role === 'buyer'} onChange={() => setRole('buyer')} />

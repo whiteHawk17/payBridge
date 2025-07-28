@@ -37,8 +37,22 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
 
 // Authenticated user info endpoint
 const jwtAuth = require('../middleware/jwtAuth');
+// GET /auth/me - Get current user info
 router.get('/me', jwtAuth, (req, res) => {
-  res.json({ user: req.user });
+  res.json({
+    id: req.user.id,
+    name: req.user.name,
+    email: req.user.email,
+    role: req.user.role,
+    photo: req.user.photo // Add photo field
+  });
+});
+
+// GET /auth/token - Get current user's token (for testing)
+router.get('/token', jwtAuth, (req, res) => {
+  // Get token from cookie or header
+  const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+  res.json({ token });
 });
 
 // Logout (for JWT, just clear token on frontend)

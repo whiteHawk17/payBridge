@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require('../middleware/passport');
 const { signToken } = require('../utils/jwt');
 const UsersModel = require('../model/UsersModel');
-const { FRONTEND_BASE_URL } = require('../config/env');
+const { FRONTEND_BASE_URL, FRONTEND_URL, cookieSettings } = require('../config/env');
 const { verifyEmail } = require('../utils/emailService');
 
 // Start Google OAuth login
@@ -23,19 +23,13 @@ router.post('/check-email', async (req, res) => {
 // Google OAuth callback
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/' }), (req, res) => {
   const { signToken } = require('../utils/jwt');
-  const { FRONTEND_BASE_URL } = require('../config/env');
   const token = signToken(req.user);
   
-  // Set JWT as HTTP-only cookie with proper settings for production
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: true, // Always secure in production
-    sameSite: 'lax', // Use 'lax' instead of 'none' for better compatibility
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days to match JWT expiration
-  });
+  // Set JWT as HTTP-only cookie with environment-specific settings
+  res.cookie('token', token, cookieSettings);
   
   // Redirect to dashboard
-  res.redirect(`${FRONTEND_BASE_URL || 'https://paybridge.site'}/dashboard`);
+  res.redirect(`${FRONTEND_URL}/dashboard`);
 });
 
 // Authenticated user info endpoint
@@ -61,11 +55,7 @@ router.get('/token', jwtAuth, (req, res) => {
 
 // Logout (for JWT, just clear token on frontend)
 router.post('/logout', (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax'
-  });
+  res.clearCookie('token', cookieSettings);
   res.json({ message: 'Logged out' });
 });
 

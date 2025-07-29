@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { BACKEND_BASE_URL } from '../api/config';
+import { SOCKET_URL, BACKEND_BASE_URL } from '../api/config';
 
 interface SocketContextType {
   socket: Socket | null;
@@ -32,7 +32,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       socket.disconnect();
     }
 
-    const newSocket = io(process.env.REACT_APP_BACKEND_URL || 'https://api.paybridge.site', {
+    const newSocket = io(SOCKET_URL, {
       auth: { token },
       transports: ['websocket', 'polling']
     });

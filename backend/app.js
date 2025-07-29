@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 const passport = require('./middleware/passport');
-const { PORT } = require('./config/env');
+const { PORT, corsOrigins } = require('./config/env');
 const connectDB = require('./config/db');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -14,12 +14,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = socketIo(server, {
   cors: {
-    origin: [
-      'https://paybridge.site',
-      'https://www.paybridge.site',
-      'http://localhost:3000',
-      'http://localhost:3001'
-    ],
+    origin: corsOrigins,
     methods: ["GET", "POST", "OPTIONS"],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
@@ -59,12 +54,7 @@ const uploadRoutes = require('./routes/upload');
 const cors = require('cors');
    
 app.use(cors({
-  origin: [
-    'https://paybridge.site',
-    'https://www.paybridge.site',
-    'http://localhost:3000',
-    'http://localhost:3001'
-  ],
+  origin: corsOrigins,
   credentials: true, // if you use cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']

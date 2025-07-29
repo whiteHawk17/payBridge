@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './TransactionsTable.module.css';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
+import { BACKEND_BASE_URL } from '../../api/config';
 
 const rowsPerPage = 7;
 
@@ -11,12 +12,17 @@ const TransactionsTable: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/transactions', { withCredentials: true })
+    console.log('Fetching transactions from:', `${BACKEND_BASE_URL}/transactions`);
+    axios.get(`${BACKEND_BASE_URL}/transactions`, { withCredentials: true })
       .then(res => {
+        console.log('Transactions fetched successfully:', res.data);
         setTransactions(res.data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((error) => {
+        console.error('Error fetching transactions:', error);
+        setLoading(false);
+      });
   }, []);
 
   const totalPages = Math.ceil(transactions.length / rowsPerPage);
@@ -52,6 +58,8 @@ const TransactionsTable: React.FC = () => {
     XLSX.writeFile(wb, 'transactions.xlsx');
   };
 
+  console.log('TransactionsTable render - loading:', loading, 'transactions:', transactions);
+  
   if (loading) return <div className={styles.tableContainer}><p>Loading...</p></div>;
   if (!transactions.length) return <div className={styles.tableContainer}><p>No transactions found.</p></div>;
 

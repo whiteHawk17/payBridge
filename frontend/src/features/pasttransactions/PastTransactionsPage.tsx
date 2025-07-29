@@ -4,6 +4,7 @@ import TransactionsTable from '../../components/pasttransactions/TransactionsTab
 import styles from './PastTransactionsPage.module.css';
 
 const PastTransactionsPage: React.FC = () => {
+  console.log('PastTransactionsPage rendering');
   return (
     <div className={styles.contentArea}>
       <PageHeader />

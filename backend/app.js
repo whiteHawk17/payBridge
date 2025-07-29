@@ -15,8 +15,9 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: process.env.FRONTEND_URL || "https://paybridge.site",
-    methods: ["GET", "POST"],
-    credentials: true
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
   }
 });
 
@@ -54,7 +55,9 @@ const cors = require('cors');
    
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'https://paybridge.site',
-  credentials: true // if you use cookies
+  credentials: true, // if you use cookies
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
 
 // Serve uploaded files

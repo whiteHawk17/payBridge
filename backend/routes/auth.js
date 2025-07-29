@@ -28,8 +28,9 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
   // Set JWT as HTTP-only cookie
   res.cookie('token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: true, // Always secure in production
+    sameSite: 'none', // Allow cross-site cookies
+    domain: '.paybridge.site', // Allow subdomain cookies
     maxAge: 24 * 60 * 60 * 1000 // 1 day
   });
   // Redirect to dashboard
@@ -60,8 +61,9 @@ router.get('/token', jwtAuth, (req, res) => {
 router.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: true,
+    sameSite: 'none',
+    domain: '.paybridge.site',
   });
   res.json({ message: 'Logged out' });
 });

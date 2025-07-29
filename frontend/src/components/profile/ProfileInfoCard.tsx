@@ -119,7 +119,27 @@ const ProfileInfoCard: React.FC = () => {
               {avatarPreview && <button onClick={() => { setAvatarFile(null); setAvatarPreview(null); }} className={styles.btn + ' ' + styles.btnSecondary} style={{ fontSize: 12 }}>Remove</button>}
             </div>
           ) : (
-            profile.photo ? <img src={profile.photo} alt={profile.name} style={{ width: 48, height: 48, borderRadius: '50%' }} /> : <span className={styles.infoValue}>{profile.name ? profile.name[0] : '?'}</span>
+            profile.photo ? (
+              <img 
+                src={profile.photo} 
+                alt={profile.name} 
+                style={{ width: 48, height: 48, borderRadius: '50%' }}
+                onError={(e) => {
+                  console.error('Profile image failed to load:', e.currentTarget.src);
+                  // Hide the broken image and show initials instead
+                  e.currentTarget.style.display = 'none';
+                  const parent = e.currentTarget.parentElement;
+                  if (parent) {
+                    const fallback = parent.querySelector('.fallback-avatar') as HTMLElement;
+                    if (fallback) fallback.style.display = 'inline-block';
+                  }
+                }}
+              />
+            ) : (
+              <span className={`${styles.infoValue} fallback-avatar`} style={{ display: 'inline-block', width: 48, height: 48, borderRadius: '50%', background: '#5b21b6', color: 'white', textAlign: 'center', lineHeight: '48px', fontSize: 20 }}>
+                {profile.name ? profile.name[0] : '?'}
+              </span>
+            )
           )}
         </div>
         {editing && (

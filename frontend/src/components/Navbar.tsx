@@ -147,12 +147,17 @@ const Navbar: React.FC<NavbarProps> = ({ onSidebarToggle, darkMode, onDarkModeTo
                 style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }}
                 onError={(e) => {
                   console.error('Image failed to load:', e.currentTarget.src);
-                  console.log('User photo field:', user.photo);
-                  console.log('BACKEND_BASE_URL:', BACKEND_BASE_URL);
+                  // Hide the broken image and show initials instead
+                  e.currentTarget.style.display = 'none';
+                  const parent = e.currentTarget.parentElement;
+                  if (parent) {
+                    const fallback = parent.querySelector('.fallback-avatar') as HTMLElement;
+                    if (fallback) fallback.style.display = 'flex';
+                  }
                 }}
               />
             ) : (
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#5b21b6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 18 }}>
+              <div className="fallback-avatar" style={{ width: 32, height: 32, borderRadius: '50%', background: '#5b21b6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 18 }}>
                 {user ? getInitials(user.name) : 'AM'}
               </div>
             )}

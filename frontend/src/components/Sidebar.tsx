@@ -31,9 +31,24 @@ const Sidebar: React.FC<SidebarProps> = ({ open, darkMode, onDarkModeToggle }) =
     <aside className={styles.sidebar} id="sidebar" style={{ display: open ? 'flex' : 'none' }}>
       <div className={styles.sidebarProfile}>
         {user && user.photo ? (
-          <img src={user.photo.startsWith('http') ? user.photo : BACKEND_BASE_URL + user.photo} alt={user.name} className={styles.userAvatar} style={{ width: 40, height: 40, borderRadius: '50%' }} />
+          <img 
+            src={user.photo.startsWith('http') ? user.photo : BACKEND_BASE_URL + user.photo} 
+            alt={user.name} 
+            className={styles.userAvatar} 
+            style={{ width: 40, height: 40, borderRadius: '50%' }}
+            onError={(e) => {
+              console.error('Sidebar image failed to load:', e.currentTarget.src);
+              // Hide the broken image and show initials instead
+              e.currentTarget.style.display = 'none';
+              const parent = e.currentTarget.parentElement;
+              if (parent) {
+                const fallback = parent.querySelector('.fallback-avatar') as HTMLElement;
+                if (fallback) fallback.style.display = 'flex';
+              }
+            }}
+          />
         ) : (
-          <div className={styles.userAvatar}>{user ? getInitials(user.name) : 'AM'}</div>
+          <div className={`${styles.userAvatar} fallback-avatar`}>{user ? getInitials(user.name) : 'AM'}</div>
         )}
         <span className={styles.userMainName}>{user ? user.name : 'User'}</span>
       </div>

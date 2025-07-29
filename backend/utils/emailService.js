@@ -45,7 +45,7 @@ const createInvitationEmail = (roomData, roomId, inviterName) => {
           </div>
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.FRONTEND_URL || 'http://localhost:3001'}/rooms/${roomId}" 
+            <a href="${process.env.FRONTEND_URL || 'https://paybridge.site'}/rooms/${roomId}" 
                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
               Join Transaction Room
             </a>

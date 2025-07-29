@@ -32,7 +32,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       socket.disconnect();
     }
 
-    const newSocket = io('http://localhost:3002', {
+    const newSocket = io(process.env.REACT_APP_BACKEND_URL || 'https://api.paybridge.site', {
       auth: { token },
       transports: ['websocket', 'polling']
     });

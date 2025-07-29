@@ -14,7 +14,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3001",
+    origin: process.env.FRONTEND_URL || "https://paybridge.site",
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -53,7 +53,7 @@ const uploadRoutes = require('./routes/upload');
 const cors = require('cors');
    
 app.use(cors({
-  origin: 'http://localhost:3001',
+  origin: process.env.FRONTEND_URL || 'https://paybridge.site',
   credentials: true // if you use cookies
 }));
 
@@ -75,7 +75,7 @@ connectDB();
 
 // Start Server
 server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = app;

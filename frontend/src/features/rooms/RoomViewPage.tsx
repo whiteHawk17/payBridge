@@ -103,7 +103,7 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
         peerConnectionRef.current.close();
     }
     
-    // Enhanced ICE configuration with multiple STUN servers and TURN servers
+    // Enhanced ICE configuration with multiple STUN servers only (no TURN servers to avoid credential issues)
     const iceServers = [
       // Primary STUN servers
       { urls: 'stun:stun.l.google.com:19302' },
@@ -112,26 +112,15 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
       { urls: 'stun:stun3.l.google.com:19302' },
       { urls: 'stun:stun4.l.google.com:19302' },
       
-      // Free public TURN servers (no credentials required)
-      {
-        urls: [
-          'turn:openrelay.metered.ca:80',
-          'turn:openrelay.metered.ca:443',
-          'turn:openrelay.metered.ca:443?transport=tcp'
-        ],
-        username: 'openrelayproject',
-        credential: 'openrelayproject'
-      },
-      
-      // Additional free TURN servers
-      {
-        urls: [
-          'turn:relay.backups.cz:3478',
-          'turn:relay.backups.cz:3478?transport=tcp'
-        ]
-      },
-      
-      // More STUN servers for redundancy
+      // Additional STUN servers for redundancy
+      { urls: 'stun:stun.stunprotocol.org:3478' },
+      { urls: 'stun:stun.voiparound.com:3478' },
+      { urls: 'stun:stun.voipbuster.com:3478' },
+      { urls: 'stun:stun.voipstunt.com:3478' },
+      { urls: 'stun:stun.voxgratia.org:3478' },
+      { urls: 'stun:stun.ekiga.net:3478' },
+      { urls: 'stun:stun.ideasip.com:3478' },
+      { urls: 'stun:stun.schlund.de:3478' },
       { urls: 'stun:stun.stunprotocol.org:3478' },
       { urls: 'stun:stun.voiparound.com:3478' },
       { urls: 'stun:stun.voipbuster.com:3478' },

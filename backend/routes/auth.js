@@ -25,14 +25,15 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
   const { signToken } = require('../utils/jwt');
   const { FRONTEND_BASE_URL } = require('../config/env');
   const token = signToken(req.user);
-  // Set JWT as HTTP-only cookie
+  
+  // Set JWT as HTTP-only cookie with proper settings for production
   res.cookie('token', token, {
     httpOnly: true,
     secure: true, // Always secure in production
-    sameSite: 'none', // Allow cross-site cookies
-    domain: '.paybridge.site', // Allow subdomain cookies
-    maxAge: 24 * 60 * 60 * 1000 // 1 day
+    sameSite: 'lax', // Use 'lax' instead of 'none' for better compatibility
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days to match JWT expiration
   });
+  
   // Redirect to dashboard
   res.redirect(`${FRONTEND_BASE_URL || 'https://paybridge.site'}/dashboard`);
 });
@@ -41,6 +42,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
 const jwtAuth = require('../middleware/jwtAuth');
 // GET /auth/me - Get current user info
 router.get('/me', jwtAuth, (req, res) => {
+  console.log('Auth /me endpoint called successfully for user:', req.user.email);
   res.json({
     id: req.user.id,
     name: req.user.name,
@@ -62,8 +64,7 @@ router.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: true,
-    sameSite: 'none',
-    domain: '.paybridge.site',
+    sameSite: 'lax'
   });
   res.json({ message: 'Logged out' });
 });

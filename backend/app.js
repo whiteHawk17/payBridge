@@ -14,7 +14,12 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "https://paybridge.site",
+    origin: [
+      'https://paybridge.site',
+      'https://www.paybridge.site',
+      'http://localhost:3000',
+      'http://localhost:3001'
+    ],
     methods: ["GET", "POST", "OPTIONS"],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
@@ -54,7 +59,12 @@ const uploadRoutes = require('./routes/upload');
 const cors = require('cors');
    
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://paybridge.site',
+  origin: [
+    'https://paybridge.site',
+    'https://www.paybridge.site',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ],
   credentials: true, // if you use cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']

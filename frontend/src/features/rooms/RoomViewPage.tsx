@@ -35,6 +35,7 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [incomingCall, setIncomingCall] = useState<{fromUserId: string, fromUserName: string, offer: RTCSessionDescriptionInit} | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<string>('disconnected');
   
   // Work status and camera state
   const [showDisputeChatbot, setShowDisputeChatbot] = useState(false);
@@ -101,38 +102,172 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
     if (peerConnectionRef.current) {
         peerConnectionRef.current.close();
     }
-    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+    
+    // Enhanced ICE configuration with multiple STUN servers and TURN servers
+    const iceServers = [
+      // Primary STUN servers
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      { urls: 'stun:stun4.l.google.com:19302' },
+      
+      // Free public TURN servers (no credentials required)
+      {
+        urls: [
+          'turn:openrelay.metered.ca:80',
+          'turn:openrelay.metered.ca:443',
+          'turn:openrelay.metered.ca:443?transport=tcp'
+        ],
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      },
+      
+      // Additional free TURN servers
+      {
+        urls: [
+          'turn:relay.backups.cz:3478',
+          'turn:relay.backups.cz:3478?transport=tcp'
+        ]
+      },
+      
+      // More STUN servers for redundancy
+      { urls: 'stun:stun.stunprotocol.org:3478' },
+      { urls: 'stun:stun.voiparound.com:3478' },
+      { urls: 'stun:stun.voipbuster.com:3478' },
+      { urls: 'stun:stun.voipstunt.com:3478' },
+      { urls: 'stun:stun.voxgratia.org:3478' }
+    ];
+    
+    const pc = new RTCPeerConnection({ 
+      iceServers,
+      iceCandidatePoolSize: 10,
+      bundlePolicy: 'max-bundle',
+      rtcpMuxPolicy: 'require'
+    });
+    
+    // Enhanced ICE candidate handling
     pc.onicecandidate = event => {
-      if (event.candidate && socket) socket.emit('ice_candidate', { roomId, candidate: event.candidate });
+      console.log('ICE candidate generated:', event.candidate);
+      if (event.candidate && socket) {
+        socket.emit('ice_candidate', { roomId, candidate: event.candidate });
+      }
     };
-    pc.ontrack = event => setRemoteStream(event.streams[0]);
+    
+    // ICE connection state monitoring
+    pc.oniceconnectionstatechange = () => {
+      console.log('ICE connection state:', pc.iceConnectionState);
+      setConnectionStatus(pc.iceConnectionState);
+      
+      if (pc.iceConnectionState === 'failed') {
+        console.log('ICE connection failed, trying to restart...');
+        // Try to restart ICE
+        pc.restartIce();
+      }
+    };
+    
+    // Connection state monitoring
+    pc.onconnectionstatechange = () => {
+      console.log('Connection state:', pc.connectionState);
+      setConnectionStatus(pc.connectionState);
+      
+      if (pc.connectionState === 'failed') {
+        console.log('Connection failed, ending call...');
+        endVideoCall(true);
+      }
+    };
+    
+    // Add connection timeout
+    const connectionTimeout = setTimeout(() => {
+      if (pc.connectionState !== 'connected') {
+        console.log('Connection timeout, ending call...');
+        endVideoCall(true);
+      }
+    }, 30000); // 30 seconds timeout
+    
+    // Clear timeout when connection is established
+    pc.onconnectionstatechange = () => {
+      if (pc.connectionState === 'connected') {
+        clearTimeout(connectionTimeout);
+      }
+    };
+    
+    pc.ontrack = event => {
+      console.log('Remote track received:', event.streams[0]);
+      setRemoteStream(event.streams[0]);
+    };
+    
     peerConnectionRef.current = pc;
     return pc;
   };
 
   const getMedia = async () => {
     const constraints = {
-        video: { deviceId: selectedCamera ? { exact: selectedCamera } : undefined, width: 640, height: 480 },
-        audio: true
+      video: { 
+        deviceId: selectedCamera ? { exact: selectedCamera } : undefined, 
+        width: { ideal: 1280, min: 640, max: 1920 },
+        height: { ideal: 720, min: 480, max: 1080 },
+        frameRate: { ideal: 30, min: 15, max: 60 },
+        aspectRatio: { ideal: 16/9 }
+      },
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        sampleRate: { ideal: 48000 },
+        channelCount: { ideal: 2 }
+      }
     };
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    setLocalStream(stream);
-    return stream;
+    
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('Media stream obtained:', stream.getTracks().map(t => ({ kind: t.kind, enabled: t.enabled })));
+      setLocalStream(stream);
+      return stream;
+    } catch (error) {
+      console.error('Error getting media:', error);
+      // Fallback to basic constraints
+      const fallbackConstraints = {
+        video: { deviceId: selectedCamera ? { exact: selectedCamera } : undefined },
+        audio: true
+      };
+      const fallbackStream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+      setLocalStream(fallbackStream);
+      return fallbackStream;
+    }
   };
   
   // Logic for the CALLER
   const startVideoCall = async () => {
     try {
       if (!socket || !user || isVideoCallActive) return;
+      
+      console.log('Starting video call...');
       const stream = await getMedia();
       setIsVideoCallActive(true);
+      
       const pc = createPeerConnection();
-      stream.getTracks().forEach(track => pc.addTrack(track, stream));
-      const offer = await pc.createOffer();
+      stream.getTracks().forEach(track => {
+        console.log('Adding track to peer connection:', track.kind);
+        pc.addTrack(track, stream);
+      });
+      
+      console.log('Creating offer...');
+      const offer = await pc.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      });
+      
+      console.log('Setting local description...');
       await pc.setLocalDescription(offer);
+      
+      console.log('Sending offer to other user...');
       socket.emit('offer', { roomId, offer, fromUserId: user.id, fromUserName: user.name });
+      
     } catch (err) {
-        alert("Could not start video call. Please check camera/mic permissions.");
+      console.error('Error starting video call:', err);
+      alert("Could not start video call. Please check camera/mic permissions.");
+      setIsVideoCallActive(false);
     }
   };
   
@@ -140,17 +275,37 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
   const acceptIncomingCall = async () => {
     try {
         if (!socket || !incomingCall || !user || isVideoCallActive) return;
+        
+        console.log('Accepting incoming call...');
         const stream = await getMedia();
         setIsVideoCallActive(true);
+        
         const pc = createPeerConnection();
-        stream.getTracks().forEach(track => pc.addTrack(track, stream));
+        stream.getTracks().forEach(track => {
+          console.log('Adding track to peer connection:', track.kind);
+          pc.addTrack(track, stream);
+        });
+        
+        console.log('Setting remote description from offer...');
         await pc.setRemoteDescription(new RTCSessionDescription(incomingCall.offer));
-        const answer = await pc.createAnswer();
+        
+        console.log('Creating answer...');
+        const answer = await pc.createAnswer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true
+        });
+        
+        console.log('Setting local description...');
         await pc.setLocalDescription(answer);
+        
+        console.log('Sending answer to caller...');
         socket.emit('answer', { roomId, answer, fromUserId: user.id, fromUserName: user.name });
         setIncomingCall(null);
+        
     } catch (err) {
-        alert("Could not accept call.");
+        console.error('Error accepting call:', err);
+        alert("Could not accept call. Please try again.");
+        setIsVideoCallActive(false);
     }
   };
 
@@ -279,9 +434,14 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
       {isVideoCallActive && (
         <div className={styles.videoCallOverlay}>
           <div className={styles.videoCallContainer}>
+            <div className={styles.connectionStatus}>
+              Connection: {connectionStatus}
+            </div>
             <div className={styles.remoteVideoContainer}>
               <video ref={remoteVideoRef} autoPlay playsInline className={styles.remoteVideo} />
-              <div className={styles.remoteVideoLabel}>Remote User</div>
+              <div className={styles.remoteVideoLabel}>
+                Remote User {remoteStream ? '(Connected)' : '(Connecting...)'}
+              </div>
             </div>
             <div className={styles.localVideoContainer}>
               <video ref={localVideoRef} autoPlay playsInline muted className={styles.localVideo} />

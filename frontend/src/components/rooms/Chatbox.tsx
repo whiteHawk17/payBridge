@@ -305,14 +305,31 @@ const Chatbox: React.FC<ChatboxProps> = ({
         {/* Video Call Controls */}
         <div className={styles.videoCallControls}>
           {!isVideoCallActive ? (
-            <button 
-              className={styles.videoCallButton}
-              onClick={onStartVideoCall}
-              disabled={!isConnected}
-              title="Start Video Call"
-            >
-              📹
-            </button>
+            <>
+              <button 
+                className={styles.videoCallButton}
+                onClick={onStartVideoCall}
+                disabled={!isConnected}
+                title="Start Video Call"
+              >
+                📹
+              </button>
+              <button 
+                className={styles.testCameraButton}
+                onClick={async () => {
+                  try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    alert('Camera and microphone access successful! You can now start a video call.');
+                    stream.getTracks().forEach(track => track.stop());
+                  } catch (error: any) {
+                    alert(`Camera test failed: ${error.message}`);
+                  }
+                }}
+                title="Test Camera Access"
+              >
+                🧪
+              </button>
+            </>
           ) : (
             <>
               <button 

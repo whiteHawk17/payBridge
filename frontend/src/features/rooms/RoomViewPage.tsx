@@ -202,39 +202,105 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
   };
 
   const getMedia = async () => {
-    const constraints = {
-      video: { 
-        deviceId: selectedCamera ? { exact: selectedCamera } : undefined, 
-        width: { ideal: 1280, min: 640, max: 1920 },
-        height: { ideal: 720, min: 480, max: 1080 },
-        frameRate: { ideal: 30, min: 15, max: 60 },
-        aspectRatio: { ideal: 16/9 }
-      },
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true,
-        sampleRate: { ideal: 48000 },
-        channelCount: { ideal: 2 }
-      }
-    };
-    
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('Media stream obtained:', stream.getTracks().map(t => ({ kind: t.kind, enabled: t.enabled })));
-      setLocalStream(stream);
-      return stream;
-    } catch (error) {
-      console.error('Error getting media:', error);
-      // Fallback to basic constraints
-      const fallbackConstraints = {
-        video: { deviceId: selectedCamera ? { exact: selectedCamera } : undefined },
-        audio: true
-      };
-      const fallbackStream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
-      setLocalStream(fallbackStream);
-      return fallbackStream;
+    // First, check if mediaDevices is supported
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error('Media devices not supported in this browser');
     }
+
+    // Check permissions first
+    try {
+      const permissions = await navigator.permissions.query({ name: 'camera' as PermissionName });
+      if (permissions.state === 'denied') {
+        throw new Error('Camera permission denied. Please enable camera access in browser settings.');
+      }
+    } catch (permError) {
+      console.log('Permission check failed, continuing anyway:', permError);
+    }
+
+    // Try multiple constraint configurations from most specific to most basic
+    const constraintConfigs = [
+      // Configuration 1: Full HD with specific device
+      {
+        video: { 
+          deviceId: selectedCamera ? { exact: selectedCamera } : undefined, 
+          width: { ideal: 1280, min: 640, max: 1920 },
+          height: { ideal: 720, min: 480, max: 1080 },
+          frameRate: { ideal: 30, min: 15, max: 60 }
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      },
+      // Configuration 2: HD with any device
+      {
+        video: { 
+          width: { ideal: 1280, min: 640, max: 1920 },
+          height: { ideal: 720, min: 480, max: 1080 },
+          frameRate: { ideal: 30, min: 15, max: 60 }
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      },
+      // Configuration 3: Standard definition
+      {
+        video: { 
+          width: { ideal: 640, min: 320, max: 1280 },
+          height: { ideal: 480, min: 240, max: 720 },
+          frameRate: { ideal: 30, min: 10, max: 30 }
+        },
+        audio: true
+      },
+      // Configuration 4: Basic video with any camera
+      {
+        video: true,
+        audio: true
+      },
+      // Configuration 5: Audio only (fallback)
+      {
+        video: false,
+        audio: true
+      }
+    ];
+
+    let lastError: any = null;
+
+    // Try each configuration until one works
+    for (let i = 0; i < constraintConfigs.length; i++) {
+      try {
+        console.log(`Trying media configuration ${i + 1}:`, constraintConfigs[i]);
+        const stream = await navigator.mediaDevices.getUserMedia(constraintConfigs[i]);
+        
+        console.log('Media stream obtained successfully:', stream.getTracks().map(t => ({ 
+          kind: t.kind, 
+          enabled: t.enabled,
+          label: t.label 
+        })));
+        
+        setLocalStream(stream);
+        return stream;
+      } catch (error: any) {
+        console.log(`Configuration ${i + 1} failed:`, error.name, error.message);
+        lastError = error;
+        
+        // If this is the last configuration and it's audio-only, we can still proceed
+        if (i === constraintConfigs.length - 1 && constraintConfigs[i].video === false) {
+          console.log('Audio-only fallback succeeded');
+          const audioStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+          setLocalStream(audioStream);
+          return audioStream;
+        }
+        
+        continue;
+      }
+    }
+
+    // If all configurations failed, throw a detailed error
+    throw new Error(`Failed to access media devices: ${lastError?.name || 'Unknown error'} - ${lastError?.message || 'No media devices available'}`);
   };
   
   // Logic for the CALLER
@@ -243,6 +309,10 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
       if (!socket || !user || isVideoCallActive) return;
       
       console.log('Starting video call...');
+      
+      // Check device availability first
+      await checkDeviceAvailability();
+      
       const stream = await getMedia();
       setIsVideoCallActive(true);
       
@@ -264,9 +334,29 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
       console.log('Sending offer to other user...');
       socket.emit('offer', { roomId, offer, fromUserId: user.id, fromUserName: user.name });
       
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error starting video call:', err);
-      alert("Could not start video call. Please check camera/mic permissions.");
+      
+      // Provide specific error messages based on error type
+      let errorMessage = "Could not start video call. ";
+      
+      if (err.name === 'NotAllowedError') {
+        errorMessage += "Camera/microphone access was denied. Please allow camera and microphone permissions in your browser settings and try again.";
+      } else if (err.name === 'NotFoundError') {
+        errorMessage += "No camera or microphone found. Please check if your devices are connected and not in use by another application.";
+      } else if (err.name === 'NotReadableError') {
+        errorMessage += "Camera or microphone is already in use by another application. Please close other apps using your camera/microphone (like FaceTime, Zoom, etc.) and try again.";
+      } else if (err.name === 'OverconstrainedError') {
+        errorMessage += "Camera does not support the requested settings. Please try again or check your camera settings.";
+      } else if (err.message.includes('Media devices not supported')) {
+        errorMessage += "Your browser does not support media devices. Please use a modern browser like Chrome, Firefox, or Safari.";
+      } else if (err.message.includes('permission denied')) {
+        errorMessage += "Camera permission denied. Please enable camera access in your browser settings.";
+      } else {
+        errorMessage += err.message || "Please check camera/microphone permissions and try again.";
+      }
+      
+      alert(errorMessage);
       setIsVideoCallActive(false);
     }
   };
@@ -403,6 +493,30 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
     }
   };
   
+  const checkDeviceAvailability = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter(device => device.kind === 'videoinput');
+      const microphones = devices.filter(device => device.kind === 'audioinput');
+      
+      console.log('Available cameras:', cameras.length);
+      console.log('Available microphones:', microphones.length);
+      
+      if (cameras.length === 0) {
+        throw new Error('No camera found. Please connect a camera and try again.');
+      }
+      
+      if (microphones.length === 0) {
+        throw new Error('No microphone found. Please connect a microphone and try again.');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error checking device availability:', error);
+      throw error;
+    }
+  };
+
   const handleCameraChange = (deviceId: string) => {
     setSelectedCamera(deviceId);
     if(isVideoCallActive) {

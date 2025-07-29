@@ -4,6 +4,7 @@ const passport = require('../middleware/passport');
 const { signToken } = require('../utils/jwt');
 const UsersModel = require('../model/UsersModel');
 const { FRONTEND_BASE_URL } = require('../config/env');
+const { verifyEmail } = require('../utils/emailService');
 
 // Start Google OAuth login
 router.get('/google', passport.authenticate('google', {
@@ -63,6 +64,23 @@ router.post('/logout', (req, res) => {
     sameSite: 'lax',
   });
   res.json({ message: 'Logged out' });
+});
+
+// Email verification endpoint
+router.post('/verify-email', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ isValid: false, message: 'Email is required' });
+    }
+    
+    const verificationResult = await verifyEmail(email);
+    res.json(verificationResult);
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({ isValid: false, message: 'Email verification failed' });
+  }
 });
 
 module.exports = router; 

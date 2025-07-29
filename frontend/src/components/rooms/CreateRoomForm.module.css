@@ -83,7 +83,7 @@
   font-size: 14px;
   color: var(--text-secondary);
 }
-textarea, input[type="number"], input[type="date"] {
+textarea, input[type="number"], input[type="date"], input[type="email"] {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
@@ -94,7 +94,26 @@ textarea, input[type="number"], input[type="date"] {
   font-size: 16px;
   box-sizing: border-box;
 }
-textarea::placeholder, input[type="number"]::placeholder, input[type="date"]::placeholder {
+
+.errorInput {
+  border-color: #dc2626 !important;
+  background-color: #fef2f2 !important;
+}
+
+.validationError {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.helpText {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+textarea::placeholder, input[type="number"]::placeholder, input[type="date"]::placeholder, input[type="email"]::placeholder {
   color: var(--text-secondary);
   opacity: 1;
 }

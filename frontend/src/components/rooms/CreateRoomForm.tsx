@@ -8,10 +8,55 @@ const CreateRoomForm: React.FC = () => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [date, setDate] = useState('');
+  const [otherPartyEmail, setOtherPartyEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [emailValidation, setEmailValidation] = useState<{isValid: boolean, message: string}>({isValid: true, message: ''});
   const navigate = useNavigate();
+
+  // Email validation function
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Handle email input change with validation
+  const handleEmailChange = (email: string) => {
+    setOtherPartyEmail(email);
+    
+    if (!email) {
+      setEmailValidation({isValid: true, message: ''});
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      setEmailValidation({isValid: false, message: 'Please enter a valid email address'});
+      return;
+    }
+    
+    setEmailValidation({isValid: true, message: ''});
+  };
+
+  // Verify email with backend
+  const verifyEmail = async (email: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`${BACKEND_BASE_URL}/auth/verify-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      return response.ok && data.isValid;
+    } catch (error) {
+      console.log('Email verification error:', error);
+      return true; // Assume valid if verification fails
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +64,24 @@ const CreateRoomForm: React.FC = () => {
     // Validate that a role is selected
     if (!role) {
       setError('Please select your role (Buyer or Seller)');
+      return;
+    }
+
+    // Validate email
+    if (!otherPartyEmail.trim()) {
+      setError('Please enter the other party\'s email address');
+      return;
+    }
+
+    if (!validateEmail(otherPartyEmail)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    // Verify email with backend
+    const isEmailValid = await verifyEmail(otherPartyEmail);
+    if (!isEmailValid) {
+      setError('Email verification failed. Please check the email address.');
       return;
     }
     
@@ -31,7 +94,8 @@ const CreateRoomForm: React.FC = () => {
         role,
         description,
         price: parseFloat(price),
-        date
+        date,
+        otherPartyEmail: otherPartyEmail.trim()
       };
       
       console.log('Submitting form with role:', role, 'Full request body:', requestBody);
@@ -104,6 +168,28 @@ const CreateRoomForm: React.FC = () => {
         <div className={styles.formGroup}>
           <label htmlFor="item-description">Item/Service Description</label>
           <textarea id="item-description" rows={4} placeholder="e.g., Vintage Camera, Graphic Design Service" required value={description} onChange={e => setDescription(e.target.value)} />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="other-party-email">
+            Other Party's Email <span style={{color: 'red'}}>*</span>
+          </label>
+          <input 
+            type="email" 
+            id="other-party-email" 
+            placeholder="e.g., john@example.com" 
+            required 
+            value={otherPartyEmail} 
+            onChange={e => handleEmailChange(e.target.value)}
+            className={!emailValidation.isValid ? styles.errorInput : ''}
+          />
+          {!emailValidation.isValid && (
+            <div className={styles.validationError}>
+              {emailValidation.message}
+            </div>
+          )}
+          <small className={styles.helpText}>
+            An invitation email will be sent to this address with room details
+          </small>
         </div>
         <div className={styles.formRow}>
           <div className={styles.formGroup}>

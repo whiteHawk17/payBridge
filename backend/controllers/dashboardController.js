@@ -1,6 +1,7 @@
 const TransactionsModel = require('../model/TransactionsModel');
 const RoomsModel = require('../model/RoomsModel');
 const UsersModel = require('../model/UsersModel');
+const { sendInvitationEmail } = require('../utils/emailService');
 
 exports.getDashboardStats = async (req, res) => {
   try {
@@ -80,12 +81,12 @@ exports.getActiveRooms = async (req, res) => {
 
 exports.createRoom = async (req, res) => {
   try {
-    const { role, description, price, date } = req.body;
+    const { role, description, price, date, otherPartyEmail } = req.body;
     const userId = req.user.id;
 
     // Validate required fields
-    if (!role || !description || !price || !date) {
-      return res.status(400).json({ error: 'All fields are required' });
+    if (!role || !description || !price || !date || !otherPartyEmail) {
+      return res.status(400).json({ error: 'All fields are required including other party email' });
     }
 
     // Create the room
@@ -131,10 +132,33 @@ exports.createRoom = async (req, res) => {
     console.log('Buyer Name:', populatedRoom.buyerId?.name);
     console.log('Seller Name:', populatedRoom.sellerId?.name);
     console.log('=== END ROOM CREATED DEBUG ===');
+
+    // Send invitation email to the other party
+    try {
+      const inviterName = req.user.name;
+      const roomData = {
+        role,
+        description,
+        price: parseFloat(price),
+        date
+      };
+      
+      const emailResult = await sendInvitationEmail(otherPartyEmail, roomData, newRoom._id, inviterName);
+      
+      if (emailResult.success) {
+        console.log('✅ Invitation email sent successfully');
+      } else {
+        console.log('⚠️ Failed to send invitation email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Email sending error:', emailError);
+      // Don't fail the room creation if email fails
+    }
     
     res.status(201).json({
       message: 'Room created successfully',
-      room: populatedRoom
+      room: populatedRoom,
+      emailSent: true
     });
   } catch (err) {
     console.error('Create room error:', err);

@@ -14,5 +14,5 @@ module.exports = {
   FRONTEND_BASE_URL: process.env.FRONTEND_BASE_URL,
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
-  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3001'
+  FRONTEND_URL: process.env.FRONTEND_URL || 'https://paybridge.site'
 };

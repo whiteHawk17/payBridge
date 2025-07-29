@@ -33,7 +33,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
     maxAge: 24 * 60 * 60 * 1000 // 1 day
   });
   // Redirect to dashboard
-  res.redirect(`${FRONTEND_BASE_URL || 'http://localhost:3001'}/dashboard`);
+  res.redirect(`${FRONTEND_BASE_URL || 'https://paybridge.site'}/dashboard`);
 });
 
 // Authenticated user info endpoint

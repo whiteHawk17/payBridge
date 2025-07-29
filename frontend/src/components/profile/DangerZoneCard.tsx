@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from './DangerZoneCard.module.css';
 import axios from 'axios';
+import { BACKEND_BASE_URL } from '../../api/config';
 
 const DangerZoneCard: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -13,7 +14,7 @@ const DangerZoneCard: React.FC = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await axios.delete('/profile', { withCredentials: true });
+      const res = await axios.delete(`${BACKEND_BASE_URL}/profile`, { withCredentials: true });
       setSuccess(res.data.message || 'Account deleted successfully.');
       setTimeout(() => {
         window.location.href = '/login'; // Redirect to login page after deletion

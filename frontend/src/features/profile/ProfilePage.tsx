@@ -7,6 +7,7 @@ import DangerZoneCard from '../../components/profile/DangerZoneCard';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage: React.FC = () => {
+  console.log('ProfilePage rendering');
   return (
     <div className={styles.contentArea}>
       <ProfileHeader />

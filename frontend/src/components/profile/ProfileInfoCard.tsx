@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ProfileInfoCard.module.css';
 import axios from 'axios';
+import { BACKEND_BASE_URL } from '../../api/config';
 
 const ProfileInfoCard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -13,13 +14,18 @@ const ProfileInfoCard: React.FC = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get('/profile', { withCredentials: true })
+    console.log('Fetching profile from:', `${BACKEND_BASE_URL}/profile`);
+    axios.get(`${BACKEND_BASE_URL}/profile`, { withCredentials: true })
       .then(res => {
+        console.log('Profile fetched successfully:', res.data);
         setProfile(res.data);
         setName(res.data.name || '');
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((error) => {
+        console.error('Error fetching profile:', error);
+        setLoading(false);
+      });
   }, []);
 
   const handleEdit = () => setEditing(true);
@@ -40,10 +46,10 @@ const ProfileInfoCard: React.FC = () => {
       // Upload avatar first
       const formData = new FormData();
       formData.append('photo', avatarFile);
-      axios.post('/profile/avatar', formData, { withCredentials: true })
+      axios.post(`${BACKEND_BASE_URL}/profile/avatar`, formData, { withCredentials: true })
         .then(res => {
           // Update profile with new name and photo
-          axios.put('/profile', { name }, { withCredentials: true })
+          axios.put(`${BACKEND_BASE_URL}/profile`, { name }, { withCredentials: true })
             .then(res2 => {
               setProfile(res2.data);
               setEditing(false);
@@ -62,7 +68,7 @@ const ProfileInfoCard: React.FC = () => {
           setSaving(false);
         });
     } else {
-      axios.put('/profile', { name }, { withCredentials: true })
+      axios.put(`${BACKEND_BASE_URL}/profile`, { name }, { withCredentials: true })
         .then(res => {
           setProfile(res.data);
           setEditing(false);
@@ -75,6 +81,8 @@ const ProfileInfoCard: React.FC = () => {
     }
   };
 
+  console.log('ProfileInfoCard render - loading:', loading, 'profile:', profile);
+  
   if (loading) return <div className={styles.profileCard}><p>Loading...</p></div>;
   if (!profile) return <div className={styles.profileCard}><p>Failed to load profile.</p></div>;
 

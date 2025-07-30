@@ -42,8 +42,11 @@ const setupSocketHandlers = (io) => {
     });
 
     // Join room
-    socket.on('join_room', async (roomId) => {
+    socket.on('join_room', async (data) => {
       try {
+        // Handle both string and object formats
+        const roomId = typeof data === 'string' ? data : data.roomId;
+        
         // Verify user is part of the room
         const room = await RoomsModel.findById(roomId);
         if (!room) {
@@ -198,21 +201,66 @@ const setupSocketHandlers = (io) => {
       });
     });
 
-    // Video Call Signaling
-    socket.on('start_video_call', (data) => {
+    // Twilio Video Call Signaling
+    socket.on('video_call_started', (data) => {
       const { roomId } = data;
-      console.log(`User ${socket.userName} started video call in room ${roomId}`);
+      console.log(`User ${socket.userName} started Twilio video call in room ${roomId}`);
       
       // Notify other users in the room
       socket.to(roomId).emit('video_call_started', {
-        userId: socket.userId,
-        userName: socket.userName
+        fromUserId: socket.userId,
+        fromUserName: socket.userName
+      });
+    });
+
+    // ZegoCloud Video Call Signaling - NEW HANDLERS
+    socket.on('outgoing_call', (data) => {
+      const { roomId, fromUserId, fromUserName } = data;
+      console.log(`User ${fromUserName} (${fromUserId}) initiated outgoing call in room ${roomId}`);
+      
+      // Notify other users in the room about incoming call
+      socket.to(roomId).emit('incoming_call', {
+        fromUserId: fromUserId,
+        fromUserName: fromUserName
+      });
+    });
+
+    socket.on('accept_call', (data) => {
+      const { roomId, fromUserId } = data;
+      console.log(`User ${socket.userName} accepted call from ${fromUserId} in room ${roomId}`);
+      
+      // Notify the caller that their call was accepted
+      socket.to(roomId).emit('call_accepted', {
+        acceptedBy: socket.userId,
+        acceptedByUserName: socket.userName
+      });
+    });
+
+    socket.on('decline_call', (data) => {
+      const { roomId, fromUserId } = data;
+      console.log(`User ${socket.userName} declined call from ${fromUserId} in room ${roomId}`);
+      
+      // Notify the caller that their call was declined
+      socket.to(roomId).emit('call_declined', {
+        declinedBy: socket.userId,
+        declinedByUserName: socket.userName
+      });
+    });
+
+    socket.on('cancel_call', (data) => {
+      const { roomId } = data;
+      console.log(`User ${socket.userName} cancelled outgoing call in room ${roomId}`);
+      
+      // Notify other users that the call was cancelled
+      socket.to(roomId).emit('call_cancelled', {
+        cancelledBy: socket.userId,
+        cancelledByUserName: socket.userName
       });
     });
 
     socket.on('end_video_call', (data) => {
-      const { roomId, fromUserId } = data;
-      console.log(`User ${socket.userName} ended video call in room ${roomId}`);
+      const { roomId } = data;
+      console.log(`User ${socket.userName} ended Twilio video call in room ${roomId}`);
       
       // Notify other users in the room
       socket.to(roomId).emit('end_video_call', {
@@ -221,48 +269,12 @@ const setupSocketHandlers = (io) => {
     });
 
     socket.on('call_rejected', (data) => {
-      const { roomId, toUserId, fromUserId } = data;
-      console.log(`User ${socket.userName} rejected call in room ${roomId}`);
+      const { roomId } = data;
+      console.log(`User ${socket.userName} rejected Twilio video call in room ${roomId}`);
       
       // Notify the caller that their call was rejected
       socket.to(roomId).emit('call_rejected', {
         fromUserId: socket.userId
-      });
-    });
-
-    // WebRTC Signaling
-    socket.on('offer', (data) => {
-      const { roomId, offer, targetUserId } = data;
-      console.log(`Offer from ${socket.userName} to ${targetUserId} in room ${roomId}`);
-      
-      // Forward offer to target user
-      socket.to(roomId).emit('offer', {
-        offer,
-        fromUserId: socket.userId,
-        fromUserName: socket.userName
-      });
-    });
-
-    socket.on('answer', (data) => {
-      const { roomId, answer, toUserId } = data;
-      console.log(`Answer from ${socket.userName} to ${toUserId} in room ${roomId}`);
-      
-      // Forward answer to target user
-      socket.to(roomId).emit('answer', {
-        answer,
-        fromUserId: socket.userId,
-        fromUserName: socket.userName
-      });
-    });
-
-    socket.on('ice_candidate', (data) => {
-      const { roomId, candidate, targetUserId } = data;
-      
-      // Forward ICE candidate to target user
-      socket.to(roomId).emit('ice_candidate', {
-        candidate,
-        fromUserId: socket.userId,
-        fromUserName: socket.userName
       });
     });
 
@@ -291,7 +303,10 @@ const setupSocketHandlers = (io) => {
     });
 
     // Handle leave room
-    socket.on('leave_room', (roomId) => {
+    socket.on('leave_room', (data) => {
+      // Handle both string and object formats
+      const roomId = typeof data === 'string' ? data : data.roomId;
+      
       socket.leave(roomId);
       
       // Update user's rooms

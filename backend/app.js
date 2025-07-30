@@ -51,6 +51,7 @@ const auditLogRoutes = require('./routes/auditLogs');
 const adminRoutes = require('./routes/admin');
 const dashboardRoutes = require('./routes/dashboard');
 const uploadRoutes = require('./routes/upload');
+const videoRoutes = require('./routes/video');
 const cors = require('cors');
    
 app.use(cors({
@@ -71,6 +72,7 @@ app.use('/audit-logs', auditLogRoutes);
 app.use('/admin', adminRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/video', videoRoutes);
 
 
 // DB Connect

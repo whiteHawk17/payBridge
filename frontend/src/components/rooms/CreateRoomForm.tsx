@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_BASE_URL } from '../../api/config';
 import styles from './CreateRoomForm.module.css';
+
+// Declare Razorpay as a global variable
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const CreateRoomForm: React.FC = () => {
   const [role, setRole] = useState<'buyer' | 'seller'>();
@@ -13,7 +20,22 @@ const CreateRoomForm: React.FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [emailValidation, setEmailValidation] = useState<{isValid: boolean, message: string}>({isValid: true, message: ''});
+  const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
   const navigate = useNavigate();
+
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => setIsRazorpayLoaded(true);
+    script.onerror = () => setError('Failed to load payment gateway');
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Email validation function
   const validateEmail = (email: string): boolean => {
@@ -58,6 +80,94 @@ const CreateRoomForm: React.FC = () => {
     }
   };
 
+  // Handle Razorpay payment
+  const handlePayment = async (roomId: string, amount: number, description: string) => {
+    try {
+      // Create payment order
+      const response = await fetch(`${BACKEND_BASE_URL}/payment/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          roomId,
+          amount,
+          description
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create payment order');
+      }
+
+      // Initialize Razorpay payment
+      const options = {
+        key: data.key,
+        amount: data.amount * 100, // Convert to paise
+        currency: data.currency,
+        name: 'PayBridge',
+        description: description,
+        order_id: data.orderId,
+        handler: async (response: any) => {
+          try {
+            // Verify payment with backend
+            const verifyResponse = await fetch(`${BACKEND_BASE_URL}/payment/verify`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyResponse.json();
+            
+            if (verifyResponse.ok) {
+              setSuccess('Payment successful! Room created and activated.');
+              setTimeout(() => {
+                navigate(`/rooms/${verifyData.roomId}`);
+              }, 2000);
+            } else {
+              setError('Payment verification failed: ' + verifyData.error);
+            }
+          } catch (error) {
+            setError('Payment verification failed');
+          }
+        },
+        prefill: {
+          name: 'User',
+          email: 'user@example.com',
+        },
+        theme: {
+          color: '#3399cc',
+        },
+        modal: {
+          ondismiss: () => {
+            setError('Payment was cancelled. You can try again.');
+          },
+        },
+        on: {
+          failed: (response: any) => {
+            setError('Payment failed: ' + (response.error.description || 'Unknown error'));
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+      
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Payment initialization failed');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -82,6 +192,12 @@ const CreateRoomForm: React.FC = () => {
     const isEmailValid = await verifyEmail(otherPartyEmail);
     if (!isEmailValid) {
       setError('Email verification failed. Please check the email address.');
+      return;
+    }
+
+    // Check if Razorpay is loaded
+    if (!isRazorpayLoaded) {
+      setError('Payment gateway is still loading. Please wait a moment and try again.');
       return;
     }
     
@@ -115,13 +231,17 @@ const CreateRoomForm: React.FC = () => {
         throw new Error(data.error || 'Failed to create room');
       }
 
-      // Room created successfully
-      setSuccess('Room created successfully! Redirecting to room...');
-      
-      // Redirect to the created room after a short delay
-      setTimeout(() => {
-        navigate(`/rooms/${data.room._id}`);
-      }, 1500);
+      // If user is buyer, initiate payment
+      if (role === 'buyer') {
+        setSuccess('Room created! Initiating payment...');
+        await handlePayment(data.room._id, parseFloat(price), description);
+      } else {
+        // If user is seller, just show success and redirect
+        setSuccess('Room created successfully! Waiting for buyer to make payment...');
+        setTimeout(() => {
+          navigate(`/rooms/${data.room._id}`);
+        }, 2000);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -134,6 +254,11 @@ const CreateRoomForm: React.FC = () => {
       <div className={styles.formHeader}>
         <h1>Create New Transaction Room</h1>
         <p>Initiate a secure transaction by defining your role and transaction details.</p>
+        {!isRazorpayLoaded && (
+          <div className={styles.loadingMessage}>
+            <i className="fas fa-spinner fa-spin"></i> Loading payment gateway...
+          </div>
+        )}
       </div>
       {error && (
         <div className={styles.errorMessage}>
@@ -195,6 +320,14 @@ const CreateRoomForm: React.FC = () => {
           <div className={styles.formGroup}>
             <label htmlFor="price">Price (₹)</label>
             <input type="number" id="price" placeholder="e.g., 500.00" required value={price} onChange={e => setPrice(e.target.value)} />
+            {role === 'buyer' && price && (
+              <div className={styles.commissionInfo}>
+                <small>
+                  Commission: ₹{(parseFloat(price) * 0.05).toFixed(2)} (5%)<br/>
+                  Total: ₹{(parseFloat(price) * 1.05).toFixed(2)}
+                </small>
+              </div>
+            )}
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="completion-date">Desired Completion Date</label>
@@ -204,7 +337,7 @@ const CreateRoomForm: React.FC = () => {
         <div className={styles.formActions}>
           <button type="button" className={styles.btn + ' ' + styles.btnSecondary} onClick={() => navigate('/dashboard')}>Cancel</button>
           <button type="submit" className={styles.btn + ' ' + styles.btnPrimary} disabled={isLoading}>
-            {isLoading ? 'Creating...' : 'Create Room'}
+            {isLoading ? 'Creating...' : role === 'buyer' ? 'Create Room & Pay' : 'Create Room'}
           </button>
         </div>
       </form>

@@ -60,6 +60,14 @@ const Sidebar: React.FC<SidebarProps> = ({ open, darkMode, onDarkModeToggle }) =
         <Link to="/past_transactions" className={styles.navLink}><i className="fas fa-history"></i><span>Past Transactions</span></Link>
         <Link to="/contact" className={styles.navLink}><i className="fas fa-headset"></i><span>Contact Us</span></Link>
         <Link to="/account_settings" className={styles.navLink}><i className="fas fa-cog"></i><span>Account Settings</span></Link>
+        
+        {/* Admin Dashboard Link - Only visible to admin users */}
+        {user && user.role === 'admin' && (
+          <Link to="/admin/dashboard" className={styles.navLink} style={{ borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: '16px', paddingTop: '16px' }}>
+            <i className="fas fa-shield-alt" style={{ color: '#fbbf24' }}></i>
+            <span style={{ color: '#fbbf24', fontWeight: '600' }}>Admin Panel</span>
+          </Link>
+        )}
       </nav>
     </aside>
   );

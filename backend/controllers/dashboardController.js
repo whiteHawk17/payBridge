@@ -89,21 +89,29 @@ exports.createRoom = async (req, res) => {
       return res.status(400).json({ error: 'All fields are required including other party email' });
     }
 
+    // First, find the other party user by email
+    const otherPartyUser = await UsersModel.findOne({ email: otherPartyEmail });
+    if (!otherPartyUser) {
+      return res.status(400).json({ error: 'Other party email not found in our system' });
+    }
+
     // Create the room
     const roomData = {
-      status: 'ACTIVE', // Set to ACTIVE so it appears in active rooms
+      status: 'PENDING', // Set to PENDING until payment is made
       disputeStatus: 'NONE'
     };
 
-    // Set buyer or seller based on role
+    // Set buyer and seller based on role
     console.log(`🔍 Creating room with role: ${role} for user: ${userId}`);
     
     if (role === 'buyer') {
       roomData.buyerId = userId;
-      console.log(`✅ Room created with BUYER: ${userId}`);
+      roomData.sellerId = otherPartyUser._id;
+      console.log(`✅ Room created with BUYER: ${userId} and SELLER: ${otherPartyUser._id}`);
     } else if (role === 'seller') {
       roomData.sellerId = userId;
-      console.log(`✅ Room created with SELLER: ${userId}`);
+      roomData.buyerId = otherPartyUser._id;
+      console.log(`✅ Room created with SELLER: ${userId} and BUYER: ${otherPartyUser._id}`);
     } else {
       console.log(`❌ Invalid role: ${role}`);
       return res.status(400).json({ error: 'Invalid role - must be "buyer" or "seller"' });
@@ -453,6 +461,54 @@ exports.getAnalytics = async (req, res) => {
     });
   } catch (err) {
     console.error('Analytics error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}; 
+
+exports.updateSellerPaymentDetails = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const userId = req.user.id;
+    const { upiId, bankAccount, ifscCode, accountHolderName } = req.body;
+
+    // Validate required fields
+    if (!upiId || !bankAccount || !ifscCode || !accountHolderName) {
+      return res.status(400).json({ error: 'All payment details are required' });
+    }
+
+    // Find the room and verify user is the seller
+    const room = await RoomsModel.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    if (room.sellerId.toString() !== userId) {
+      return res.status(403).json({ error: 'Only the seller can update payment details' });
+    }
+
+    // Update the seller payment details
+    const updatedRoom = await RoomsModel.findByIdAndUpdate(
+      roomId,
+      {
+        sellerPaymentDetails: {
+          upiId,
+          bankAccount,
+          ifscCode,
+          accountHolderName,
+          isDetailsComplete: true
+        }
+      },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: 'Payment details updated successfully',
+      sellerPaymentDetails: updatedRoom.sellerPaymentDetails
+    });
+
+  } catch (error) {
+    console.error('Update seller payment details error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 }; 

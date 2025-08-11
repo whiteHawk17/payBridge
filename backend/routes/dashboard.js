@@ -33,4 +33,7 @@ router.get('/past-transactions', jwtAuth, dashboardController.getPastTransaction
 // GET /analytics
 router.get('/analytics', jwtAuth, dashboardController.getAnalytics);
 
+// POST /rooms/:roomId/seller-payment-details
+router.post('/rooms/:roomId/seller-payment-details', jwtAuth, dashboardController.updateSellerPaymentDetails);
+
 module.exports = router; 

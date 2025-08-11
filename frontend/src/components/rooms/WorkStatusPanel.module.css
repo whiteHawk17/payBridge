@@ -46,6 +46,59 @@
   letter-spacing: 0.5px;
 }
 
+/* Room Information Styles */
+.roomInfo {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.roomInfoHeader {
+  margin-bottom: 12px;
+}
+
+.roomInfoHeader h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.roomInfoContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.roomDetail {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.roomDetail:last-child {
+  border-bottom: none;
+}
+
+.detailLabel {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 14px;
+  min-width: 100px;
+}
+
+.detailValue {
+  color: #1f2937;
+  font-size: 14px;
+  text-align: right;
+  flex: 1;
+  word-break: break-word;
+}
+
 .timeline {
   display: flex;
   flex-direction: column;
@@ -373,8 +426,8 @@
   font-size: 16px;
 }
 
-/* Debug info styling */
-.debugInfo {
+/* Status info styling */
+.statusInfo {
   font-size: 12px;
   color: #666;
   margin-top: 10px;
@@ -384,11 +437,11 @@
   border: 1px solid #e5e7eb;
 }
 
-.debugInfo div {
+.statusInfo div {
   margin-bottom: 4px;
 }
 
-.debugInfo strong {
+.statusInfo strong {
   color: #374151;
 }
 
@@ -412,6 +465,47 @@
   line-height: 1.5;
 }
 
+/* Payment Release Section Styles */
+.paymentReleaseSection {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #0ea5e9;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px 0;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.paymentReleaseSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0ea5e9, #3b82f6, #8b5cf6);
+}
+
+.paymentReleaseSection h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0c4a6e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.paymentReleaseSection p {
+  margin: 0 0 16px 0;
+  color: #0369a1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 /* Dark mode support */
 :global(body.dark-mode) .workStatusPanel {
   background: #1f2937;
@@ -419,6 +513,23 @@
 }
 
 :global(body.dark-mode) .header h3 {
+  color: #f9fafb;
+}
+
+:global(body.dark-mode) .roomInfo {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+:global(body.dark-mode) .roomInfoHeader h4 {
+  color: #f9fafb;
+}
+
+:global(body.dark-mode) .detailLabel {
+  color: #d1d5db;
+}
+
+:global(body.dark-mode) .detailValue {
   color: #f9fafb;
 }
 
@@ -440,6 +551,83 @@
   background: #374151;
 }
 
+/* Dark mode styles for payment release section */
+:global(body.dark-mode) .paymentReleaseSection {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border-color: #3b82f6;
+}
+
+:global(body.dark-mode) .paymentReleaseSection h4 {
+  color: #dbeafe;
+}
+
+:global(body.dark-mode) .paymentReleaseSection p {
+  color: #93c5fd;
+}
+
+/* Payment Alert Styles */
+.paymentAlert {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.paymentAlert::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f59e0b, #f97316, #ea580c);
+}
+
+.paymentAlertContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.paymentAlertContent span {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.paymentAlertContent h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.paymentAlertContent p {
+  margin: 0;
+  color: #a16207;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Dark mode styles for payment alert */
+:global(body.dark-mode) .paymentAlert {
+  background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+  border-color: #f59e0b;
+}
+
+:global(body.dark-mode) .paymentAlertContent h4 {
+  color: #fbbf24;
+}
+
+:global(body.dark-mode) .paymentAlertContent p {
+  color: #fcd34d;
+}
+
+
+
 /* Responsive design */
 @media (max-width: 768px) {
   .workStatusPanel {
@@ -450,6 +638,24 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+  
+  .roomInfo {
+    padding: 12px;
+  }
+  
+  .roomDetail {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+  
+  .detailLabel {
+    min-width: auto;
+  }
+  
+  .detailValue {
+    text-align: left;
   }
   
   .timelineHeader {

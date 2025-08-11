@@ -28,6 +28,7 @@ const roomSchema = new Schema(
       type: String,
       enum: [
         "PENDING",
+        "AWAITING_PAYMENT",
         "ACTIVE",
         "AWAITING_DELIVERY",
         "VERIFICATION",
@@ -37,6 +38,13 @@ const roomSchema = new Schema(
       default: "PENDING"
     },
     transactionId: { type: Schema.Types.ObjectId, ref: "Transaction", default: null },
+    sellerPaymentDetails: {
+      upiId: { type: String, default: null },
+      bankAccount: { type: String, default: null },
+      ifscCode: { type: String, default: null },
+      accountHolderName: { type: String, default: null },
+      isDetailsComplete: { type: Boolean, default: false }
+    },
     disputeStatus: { type: String, enum: ["NONE", "AI_REVIEW", "AI_DECIDED", "ESCALATED", "RESOLVED"], default: "NONE" },
     aiDecision: {
       result: { type: String, default: null },

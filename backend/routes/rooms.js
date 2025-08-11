@@ -213,7 +213,7 @@ router.post('/:roomId/buyer-response', jwtAuth, upload.array('attachments', 10),
 
     // Update room phase
     if (action === 'APPROVE') {
-      room.workStatus.currentPhase = 'APPROVED';
+      room.workStatus.currentPhase = 'COMPLETED';
     } else if (action === 'REJECT') {
       room.workStatus.currentPhase = 'REJECTED';
     } else if (action === 'DISPUTE') {

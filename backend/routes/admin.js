@@ -58,4 +58,10 @@ router.get('/messages/flagged', jwtAuth, requireAdmin, adminController.getFlagge
 // POST /admin/notifications
 router.post('/notifications', jwtAuth, requireAdmin, adminController.sendNotification);
 
+// Payment monitoring and analytics routes
+router.get('/analytics/payments', requireAdmin, adminController.getPaymentAnalytics);
+router.get('/payouts/:transactionId', requireAdmin, adminController.getPayoutDetails);
+router.post('/payouts/:transactionId/retry', requireAdmin, adminController.retryFailedPayout);
+router.get('/transactions/disputed', requireAdmin, adminController.getDisputedTransactions);
+
 module.exports = router; 

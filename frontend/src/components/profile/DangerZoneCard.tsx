@@ -17,7 +17,7 @@ const DangerZoneCard: React.FC = () => {
       const res = await axios.delete(`${BACKEND_BASE_URL}/profile`, { withCredentials: true });
       setSuccess(res.data.message || 'Account deleted successfully.');
       setTimeout(() => {
-        window.location.href = '/login'; // Redirect to login page after deletion
+        window.location.href = '/'; // Redirect to home page after deletion
       }, 1500);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to delete account.');

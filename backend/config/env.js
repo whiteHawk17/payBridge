@@ -37,5 +37,9 @@ module.exports = {
     sameSite: isDevelopment ? 'lax' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     ...(isDevelopment ? {} : { domain: '.paybridge.site' }) // Only set domain in production
-  }
+  },
+  
+  // Razorpay configuration
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || 'rzp_test_Yk5Y9J6bMkcFuA',
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || 'gvVHaiiNc9NJbG5wyWnaRZ7O'
 };

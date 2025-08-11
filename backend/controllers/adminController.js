@@ -334,4 +334,155 @@ exports.sendNotification = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
+};
+
+// Payment monitoring and analytics
+exports.getPaymentAnalytics = async (req, res) => {
+  try {
+    const { startDate, endDate, status } = req.query;
+    
+    let query = {};
+    
+    // Date range filter
+    if (startDate && endDate) {
+      query.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate)
+      };
+    }
+    
+    // Status filter
+    if (status) {
+      query.paymentStatus = status;
+    }
+    
+    const transactions = await TransactionsModel.find(query)
+      .populate('buyerId', 'name email')
+      .populate('sellerId', 'name email')
+      .populate('roomId', 'description status')
+      .sort({ createdAt: -1 });
+    
+    // Calculate analytics
+    const totalTransactions = transactions.length;
+    const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const successfulPayments = transactions.filter(t => t.paymentStatus === 'SUCCESS').length;
+    const pendingPayouts = transactions.filter(t => t.isFundsReleased && t.payoutStatus === 'PROCESSING').length;
+    const failedPayouts = transactions.filter(t => t.payoutStatus === 'FAILED').length;
+    
+    // Status distribution
+    const statusDistribution = transactions.reduce((acc, t) => {
+      acc[t.paymentStatus] = (acc[t.paymentStatus] || 0) + 1;
+      return acc;
+    }, {});
+    
+    // Payout status distribution
+    const payoutStatusDistribution = transactions.reduce((acc, t) => {
+      if (t.isFundsReleased) {
+        acc[t.payoutStatus] = (acc[t.payoutStatus] || 0) + 1;
+      }
+      return acc;
+    }, {});
+    
+    // Daily transaction trend
+    const dailyTrend = transactions.reduce((acc, t) => {
+      const date = t.createdAt.toISOString().split('T')[0];
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {});
+    
+    res.json({
+      success: true,
+      analytics: {
+        totalTransactions,
+        totalAmount,
+        successfulPayments,
+        pendingPayouts,
+        failedPayouts,
+        statusDistribution,
+        payoutStatusDistribution,
+        dailyTrend
+      },
+      transactions: transactions.slice(0, 50) // Limit to recent 50
+    });
+    
+  } catch (error) {
+    console.error('Get payment analytics error:', error);
+    res.status(500).json({ error: 'Failed to get payment analytics' });
+  }
+};
+
+exports.getPayoutDetails = async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+    
+    const transaction = await TransactionsModel.findById(transactionId)
+      .populate('buyerId', 'name email')
+      .populate('sellerId', 'name email')
+      .populate('roomId', 'description sellerPaymentDetails');
+    
+    if (!transaction) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+    
+    res.json({
+      success: true,
+      transaction
+    });
+    
+  } catch (error) {
+    console.error('Get payout details error:', error);
+    res.status(500).json({ error: 'Failed to get payout details' });
+  }
+};
+
+exports.retryFailedPayout = async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+    
+    const transaction = await TransactionsModel.findById(transactionId)
+      .populate('roomId', 'sellerPaymentDetails');
+    
+    if (!transaction) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+    
+    if (transaction.payoutStatus !== 'FAILED') {
+      return res.status(400).json({ error: 'Only failed payouts can be retried' });
+    }
+    
+    // TODO: Implement retry logic with Razorpay
+    // For now, just update status
+    await TransactionsModel.findByIdAndUpdate(transactionId, {
+      payoutStatus: 'PENDING',
+      payoutCompletedAt: null
+    });
+    
+    res.json({
+      success: true,
+      message: 'Payout retry initiated'
+    });
+    
+  } catch (error) {
+    console.error('Retry failed payout error:', error);
+    res.status(500).json({ error: 'Failed to retry payout' });
+  }
+};
+
+exports.getDisputedTransactions = async (req, res) => {
+  try {
+    const transactions = await TransactionsModel.find({ flagged: true })
+      .populate('buyerId', 'name email')
+      .populate('sellerId', 'name email')
+      .populate('roomId', 'description status')
+      .sort({ updatedAt: -1 });
+    
+    res.json({
+      success: true,
+      disputedTransactions: transactions
+    });
+    
+  } catch (error) {
+    console.error('Get disputed transactions error:', error);
+    res.status(500).json({ error: 'Failed to get disputed transactions' });
+  }
 }; 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSocket } from '../../contexts/SocketContext';
 import { BACKEND_BASE_URL } from '../../api/config';
+import PaymentReleaseButton from './PaymentReleaseButton';
 import styles from './WorkStatusPanel.module.css';
 
 interface WorkUpdate {
@@ -249,6 +250,27 @@ const WorkStatusPanel: React.FC<WorkStatusPanelProps> = ({
         </div>
       </div>
 
+      {/* Room Information */}
+      <div className={styles.roomInfo}>
+        <div className={styles.roomInfoHeader}>
+          <h4>📋 Room Details</h4>
+        </div>
+        <div className={styles.roomInfoContent}>
+          {roomStatus?.description && (
+            <div className={styles.roomDetail}>
+              <span className={styles.detailLabel}>Description:</span>
+              <span className={styles.detailValue}>{roomStatus.description}</span>
+            </div>
+          )}
+          {roomStatus?.price && (
+            <div className={styles.roomDetail}>
+              <span className={styles.detailLabel}>Price:</span>
+              <span className={styles.detailValue}>₹{roomStatus.price.toLocaleString()}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Progress Timeline */}
       <div className={styles.timeline}>
         {workStatus?.sellerUpdates && workStatus.sellerUpdates.length > 0 ? (
@@ -396,6 +418,41 @@ const WorkStatusPanel: React.FC<WorkStatusPanelProps> = ({
           </div>
         )}
 
+        {/* Payment Release Button for Buyers */}
+        {userRole === 'buyer' && roomStatus?.transactionId && (workStatus?.currentPhase === 'COMPLETED' || workStatus?.currentPhase === 'APPROVED') && roomStatus?.sellerPaymentDetails?.isDetailsComplete && (
+          <div className={styles.paymentReleaseSection}>
+            <h4>💰 Release Payment to Seller</h4>
+            <p>Work has been {workStatus?.currentPhase === 'COMPLETED' ? 'completed' : 'approved'}. Release payment to the seller when you're satisfied.</p>
+            <PaymentReleaseButton
+              roomId={roomId}
+              transactionId={roomStatus.transactionId}
+              amount={roomStatus.price || 0}
+              sellerName={roomStatus.sellerId?.name || 'Seller'}
+              onPaymentReleased={() => {
+                // Refresh work status after payment release
+                fetchWorkStatus();
+                // You can also emit a socket event to notify other users
+                if (socket) {
+                  socket.emit('payment_released', { roomId });
+                }
+              }}
+            />
+          </div>
+        )}
+
+        {/* Message when seller hasn't provided payment details */}
+        {userRole === 'buyer' && roomStatus?.transactionId && (workStatus?.currentPhase === 'COMPLETED' || workStatus?.currentPhase === 'APPROVED') && !roomStatus?.sellerPaymentDetails?.isDetailsComplete && (
+          <div className={styles.paymentAlert}>
+            <div className={styles.paymentAlertContent}>
+              <span>💰</span>
+              <div>
+                <h4>Payment Release Pending</h4>
+                <p>The seller needs to add their payment details (UPI ID and bank details) before you can release payment. Please ask them to complete their payment setup.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
 
 
         {workStatus?.currentPhase === 'DISPUTED' && (
@@ -407,13 +464,11 @@ const WorkStatusPanel: React.FC<WorkStatusPanelProps> = ({
           </button>
         )}
         
-                {/* Debug info */}
-        <div className={styles.debugInfo}>
+                {/* Status info */}
+        <div className={styles.statusInfo}>
           <div><strong>Status:</strong></div>
           <div>Role: {userRole}</div>
           <div>Phase: {workStatus?.currentPhase || 'NOT_STARTED'}</div>
-          <div>Updates: {workStatus?.sellerUpdates?.length || 0}</div>
-          <div>Responses: {workStatus?.buyerResponses?.length || 0}</div>
         </div>
       </div>
 

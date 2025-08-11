@@ -6,6 +6,7 @@ import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import Chatbox from '../../components/rooms/Chatbox';
 import WorkStatusPanel from '../../components/rooms/WorkStatusPanel';
 import DisputeChatbot from '../../components/rooms/DisputeChatbot';
+import SellerPaymentDetailsForm from '../../components/rooms/SellerPaymentDetailsForm';
 import styles from './RoomViewPage.module.css';
 
 // Interfaces
@@ -16,6 +17,15 @@ interface RoomData {
   status: string;
   transactionId?: string;
   createdAt: string;
+  price?: number;
+  description?: string;
+  sellerPaymentDetails?: {
+    upiId?: string;
+    bankAccount?: string;
+    ifscCode?: string;
+    accountHolderName?: string;
+    isDetailsComplete?: boolean;
+  };
 }
 interface User { id: string; name: string; email: string; role: string; }
 interface RoomViewPageProps { darkMode?: boolean; }
@@ -37,6 +47,9 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
   // Component state
   const [showDisputeChatbot, setShowDisputeChatbot] = useState(false);
   const [userRole, setUserRole] = useState<'buyer' | 'seller'>();
+
+  // Payment details form state
+  const [showPaymentDetailsForm, setShowPaymentDetailsForm] = useState(false);
 
   const videoContainerRef = useRef<HTMLDivElement>(null);
 
@@ -160,8 +173,20 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
   const endVideoCall = () => {
     setIsVideoCallActive(false);
     setIsCalling(false);
-    setIncomingCall(null);
-    window.location.reload(); // Reload to ensure a clean state
+    if (videoContainerRef.current) {
+      videoContainerRef.current.innerHTML = '';
+    }
+  };
+
+  const handlePaymentDetailsSubmitted = () => {
+    setShowPaymentDetailsForm(false);
+    // Refresh room data to show updated status
+    if (roomId) {
+      fetch(`${BACKEND_BASE_URL}/dashboard/rooms/${roomId}`, { credentials: 'include' })
+        .then(response => response.json())
+        .then(data => setRoom(data))
+        .catch(err => console.error('Failed to refresh room data:', err));
+    }
   };
 
   // Socket listeners for the call notification flow
@@ -259,6 +284,45 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
       ) : (
         // Your original page content remains here when call is not active
         <div className={styles.mainContent}>
+          {/* Payment Details Prompt for Sellers */}
+          {user && roomId && userRole === 'seller' && room && (
+            <div className={styles.paymentPrompt}>
+              {!room.sellerPaymentDetails?.isDetailsComplete ? (
+                <div className={styles.paymentAlert}>
+                  <div className={styles.paymentAlertContent}>
+                    <span>💰</span>
+                    <div>
+                      <h4>Payment Details Required</h4>
+                      <p>Add your UPI ID and bank details to receive payments when work is completed.</p>
+                    </div>
+                    <button 
+                      className={styles.addPaymentButton}
+                      onClick={() => setShowPaymentDetailsForm(true)}
+                    >
+                      Add Payment Details
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.paymentSuccess}>
+                  <div className={styles.paymentSuccessContent}>
+                    <span>✅</span>
+                    <div>
+                      <h4>Payment Details Complete</h4>
+                      <p>Your payment details are set up. You'll receive payments when buyers release funds.</p>
+                    </div>
+                    <button 
+                      className={styles.editPaymentButton}
+                      onClick={() => setShowPaymentDetailsForm(true)}
+                    >
+                      Edit Details
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className={styles.workStatusContainer}>
             {user && roomId && userRole && <WorkStatusPanel roomId={roomId} currentUserId={user.id} userRole={userRole} roomStatus={room} />}
           </div>
@@ -282,6 +346,16 @@ const RoomViewPage: React.FC<RoomViewPageProps> = ({ darkMode = false }) => {
           userRole={userRole}
           isOpen={showDisputeChatbot}
           onClose={() => setShowDisputeChatbot(false)}
+        />
+      )}
+
+      {/* Seller Payment Details Form */}
+      {user && roomId && userRole === 'seller' && (
+        <SellerPaymentDetailsForm
+          roomId={roomId}
+          onDetailsSubmitted={handlePaymentDetailsSubmitted}
+          isOpen={showPaymentDetailsForm}
+          onClose={() => setShowPaymentDetailsForm(false)}
         />
       )}
     </div>

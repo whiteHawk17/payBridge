@@ -22,7 +22,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   }, []);
 
   if (loading) return null; // or a spinner
-  return authenticated ? <>{children}</> : <Navigate to="/login" />;
+  return authenticated ? <>{children}</> : <Navigate to="/" />;
 };
 
 export default ProtectedRoute; 

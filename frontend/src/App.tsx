@@ -6,7 +6,6 @@ import PublicLayout from './layouts/PublicLayout';
 import AppLayout from './layouts/AppLayout';
 import AdminLayout from './layouts/AdminLayout';
 import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import DashboardPage from './features/dashboard/DashboardPage';
 import ProfilePage from './features/profile/ProfilePage';
@@ -21,8 +20,13 @@ import AdminDashboardPage from './features/admin/AdminDashboardPage';
 import UsersManagementPage from './features/admin/UsersManagementPage';
 import SettingsPage from './features/admin/SettingsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 import SocketTest from './components/rooms/SocketTest';
 import CameraTest from './components/rooms/CameraTest';
+// Import policy pages
+import TermsPage from './features/policies/TermsPage';
+import PrivacyPage from './features/policies/PrivacyPage';
+import RefundPage from './features/policies/RefundPage';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -53,7 +57,12 @@ function App() {
         {/* Public routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          {/* Policy pages - accessible without login */}
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/refund-policy" element={<RefundPage />} />
+          {/* Contact page - accessible without login */}
+          <Route path="/contact" element={<ContactPage />} />
         </Route>
         {/* User protected routes */}
         <Route element={<AppLayout darkMode={darkMode} onDarkModeToggle={handleDarkModeToggle} />}>
@@ -64,16 +73,15 @@ function App() {
           <Route path="/rooms/:roomId" element={<ProtectedRoute><RoomViewPage darkMode={darkMode} /></ProtectedRoute>} />
           <Route path="/quickstats" element={<ProtectedRoute><QuickStatsPage /></ProtectedRoute>} />
           <Route path="/past_transactions" element={<ProtectedRoute><PastTransactionsPage /></ProtectedRoute>} />
-          <Route path="/contact" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />
           <Route path="/account_settings" element={<ProtectedRoute><AccountSettingsPage /></ProtectedRoute>} />
         <Route path="/socket-test" element={<ProtectedRoute><SocketTest /></ProtectedRoute>} />
         <Route path="/camera-test" element={<ProtectedRoute><CameraTest /></ProtectedRoute>} />
         </Route>
         {/* Admin protected routes */}
         <Route element={<AdminLayout />}>
-          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-          <Route path="/admin/users" element={<UsersManagementPage />} />
-          <Route path="/admin/settings" element={<SettingsPage />} />
+          <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><UsersManagementPage /></AdminRoute>} />
+          <Route path="/admin/settings" element={<AdminRoute><SettingsPage /></AdminRoute>} />
           {/* Add more admin routes here */}
         </Route>
         {/* 404 */}

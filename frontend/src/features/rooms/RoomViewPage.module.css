@@ -505,6 +505,117 @@
   .remoteVideoLabel,
   .localVideoLabel {
     font-size: 12px;
-    padding: 6px 12px;
   }
+}
+
+/* Payment Prompt Styles */
+.paymentPrompt {
+  margin-bottom: 20px;
+}
+
+.paymentAlert,
+.paymentSuccess {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.paymentSuccess {
+  background: #d1fae5;
+  border-color: #10b981;
+}
+
+.paymentAlertContent,
+.paymentSuccessContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.paymentAlertContent span,
+.paymentSuccessContent span {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.paymentAlertContent div,
+.paymentSuccessContent div {
+  flex: 1;
+}
+
+.paymentAlertContent h4,
+.paymentSuccessContent h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.paymentSuccessContent h4 {
+  color: #065f46;
+}
+
+.paymentAlertContent p,
+.paymentSuccessContent p {
+  margin: 0;
+  font-size: 14px;
+  color: #92400e;
+  line-height: 1.4;
+}
+
+.paymentSuccessContent p {
+  color: #065f46;
+}
+
+.addPaymentButton,
+.editPaymentButton {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.addPaymentButton {
+  background: #f59e0b;
+  color: white;
+}
+
+.addPaymentButton:hover {
+  background: #d97706;
+}
+
+.editPaymentButton {
+  background: #10b981;
+  color: white;
+}
+
+.editPaymentButton:hover {
+  background: #059669;
+}
+
+/* Dark mode support for payment prompt */
+.darkMode .paymentAlert {
+  background: #451a03;
+  border-color: #f59e0b;
+}
+
+.darkMode .paymentSuccess {
+  background: #064e3b;
+  border-color: #10b981;
+}
+
+.darkMode .paymentAlertContent h4,
+.darkMode .paymentAlertContent p {
+  color: #fbbf24;
+}
+
+.darkMode .paymentSuccessContent h4,
+.darkMode .paymentSuccessContent p {
+  color: #34d399;
 } 
